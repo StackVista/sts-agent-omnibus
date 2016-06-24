@@ -4,7 +4,7 @@ name 'datadog-agent'
 
 local_agent_repo = ENV['LOCAL_AGENT_REPO']
 if local_agent_repo.nil? || local_agent_repo.empty?
-  source git: 'https://github.com/DataDog/dd-agent.git'
+  source git: 'git@github.com:StackVista/sts-agent.git'
 else
   # For local development
   source path: ENV['LOCAL_AGENT_REPO']
@@ -17,7 +17,7 @@ else
   default_version agent_branch
 end
 
-relative_path 'dd-agent'
+relative_path 'sts-agent'
 
 build do
   ship_license 'https://raw.githubusercontent.com/DataDog/dd-agent/master/LICENSE'
