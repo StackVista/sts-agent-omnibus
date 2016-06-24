@@ -23,12 +23,8 @@ rm -rf /opt/$PROJECT_NAME/*
 
 cd $PROJECT_DIR
 
-ssh-add /sts-build-keys/id_rsa
-
 # Allow to use a different dd-agent-omnibus branch
-git fetch --all
-git checkout $OMNIBUS_BRANCH
-git reset --hard origin/$OMNIBUS_BRANCH
+ssh-agent bash -c 'ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts; ssh-add /sts-build-keys/id_rsa; git fetch --all; git checkout $OMNIBUS_BRANCH; git reset --hard origin/$OMNIBUS_BRANCH'
 
 # If an RPM_SIGNING_PASSPHRASE has been passed, let's import the signing key
 if [ -n "$RPM_SIGNING_PASSPHRASE" ]; then
@@ -44,4 +40,5 @@ git --git-dir=/var/cache/omnibus/cache/git_cache/opt/datadog-agent tag -d `git -
 
 # Install the gems we need, with stubs in bin/
 bundle update # Make sure to update to the latest version of omnibus-software
-bin/omnibus build -l=$LOG_LEVEL $PROJECT_NAME
+
+ssh-agent bash -c 'ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts; ssh-add /sts-build-keys/id_rsa; bin/omnibus build -l=$LOG_LEVEL $PROJECT_NAME'
