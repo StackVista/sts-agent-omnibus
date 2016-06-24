@@ -22,6 +22,9 @@ rm -rf /etc/dd-agent
 rm -rf /opt/$PROJECT_NAME/*
 
 cd $PROJECT_DIR
+
+ssh-add /sts-build-keys/id_rsa
+
 # Allow to use a different dd-agent-omnibus branch
 git fetch --all
 git checkout $OMNIBUS_BRANCH
