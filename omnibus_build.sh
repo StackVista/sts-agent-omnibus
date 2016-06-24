@@ -6,7 +6,7 @@
 #
 ############################
 
-PROJECT_DIR=dd-agent-omnibus
+PROJECT_DIR=sts-agent-omnibus
 PROJECT_NAME=datadog-agent
 LOG_LEVEL=${LOG_LEVEL:-"info"}
 export OMNIBUS_BRANCH=${OMNIBUS_BRANCH:-"master"}
