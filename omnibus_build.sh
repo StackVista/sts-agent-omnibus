@@ -6,9 +6,9 @@
 #
 ############################
 
-PROJECT_DIR=sts-agent-omnibus
-PROJECT_NAME=datadog-agent
-LOG_LEVEL=${LOG_LEVEL:-"info"}
+export PROJECT_DIR=sts-agent-omnibus
+export PROJECT_NAME=datadog-agent
+export LOG_LEVEL=${LOG_LEVEL:-"info"}
 export OMNIBUS_BRANCH=${OMNIBUS_BRANCH:-"master"}
 export OMNIBUS_SOFTWARE_BRANCH=${OMNIBUS_SOFTWARE_BRANCH:-"master"}
 export OMNIBUS_RUBY_BRANCH=${OMNIBUS_RUBY_BRANCH:-"datadog-5.0.0"}
@@ -41,4 +41,4 @@ git --git-dir=/var/cache/omnibus/cache/git_cache/opt/datadog-agent tag -d `git -
 # Install the gems we need, with stubs in bin/
 bundle update # Make sure to update to the latest version of omnibus-software
 
-ssh-agent bash -c 'ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts; ssh-add /sts-build-keys/id_rsa; bin/omnibus build -l=$LOG_LEVEL $PROJECT_NAME'
+ssh-agent bash -c "ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts; ssh-add /sts-build-keys/id_rsa; bin/omnibus build -l=$LOG_LEVEL $PROJECT_NAME"
