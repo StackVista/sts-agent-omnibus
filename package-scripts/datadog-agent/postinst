@@ -1,6 +1,6 @@
 #!/bin/sh
 
-INSTALL_DIR=/opt/datadog-agent
+INSTALL_DIR=/opt/stackstate-agent
 LOG_DIR=/var/log/datadog
 RUN_DIR=$INSTALL_DIR/run
 
@@ -23,7 +23,7 @@ fi
 # Linux installation
 if [ "$DISTRIBUTION" != "Darwin" ]; then
   # Linus specific variables
-  CONFIG_DIR=/etc/dd-agent
+  CONFIG_DIR=/etc/sts-agent
 
   # Since we now package our own supervisor config, we no longer want
   # the old config to be loaded. Since supervisor automatically loads
@@ -50,7 +50,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
               if [ ! $USER_EXISTS -eq 0 ]; then
                   echo "Creating dd-agent user"
                   adduser --system dd-agent --disabled-login --shell /bin/sh --no-create-home --group --quiet
-                  usermod -d /opt/datadog-agent dd-agent
+                  usermod -d /opt/stackstate-agent dd-agent
               elif id -nG dd-agent | grep --invert-match --word-regexp --quiet 'dd-agent'; then
                   # User exists but is not part of the dd-agent group
                   echo "Adding dd-agent user to dd-agent group"
@@ -71,7 +71,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   chown -R dd-agent:root ${CONFIG_DIR}
   chown -R dd-agent:root ${LOG_DIR}
   chown root:root /etc/init.d/datadog-agent
-  chown -R root:root /opt/datadog-agent
+  chown -R root:root /opt/stackstate-agent
   chown -R dd-agent:root ${RUN_DIR}
 
   if command -v chkconfig >/dev/null 2>&1; then
@@ -103,7 +103,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
   if [ $RETVAL -ne 0 ]; then
       if [ $RETVAL -eq 3 ]; then
-          # No datadog.conf file is present. The user is probably following
+          # No stackstate.conf file is present. The user is probably following
           # the step-by-step instructions and will add the config file next.
           exit 0
       else
@@ -162,18 +162,18 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   echo "# Copying conf"
   mkdir -vp $CONF_DIR/checks.d
 
-  if [ -e "/tmp/datadog.conf" ]; then
-    mv -vf /tmp/datadog.conf $CONF_DIR
+  if [ -e "/tmp/stackstate.conf" ]; then
+    mv -vf /tmp/stackstate.conf $CONF_DIR
     mv -vf /tmp/conf.d/* $CONF_DIR/conf.d
     cp -vn /tmp/checks.d/* $CONF_DIR/checks.d
-    rm -vrf /tmp/datadog.conf /tmp/conf.d /tmp/checks.d
+    rm -vrf /tmp/stackstate.conf /tmp/conf.d /tmp/checks.d
   # Or copying default
   else
-    sed -E 's/^api_key:$/api_key: APIKEY/' $CONF_DIR/datadog.conf.example > $CONF_DIR/datadog.conf
+    sed -E 's/^api_key:$/api_key: APIKEY/' $CONF_DIR/stackstate.conf.example > $CONF_DIR/stackstate.conf
   fi
 
   echo "# Setting correct rights on conf"
-  chown -v $INSTALL_USER:admin $CONF_DIR/datadog.conf
+  chown -v $INSTALL_USER:admin $CONF_DIR/stackstate.conf
   chown -vR $INSTALL_USER:admin $CONF_DIR/conf.d $CONF_DIR/checks.d
 
   # `datadog-agent` command line
@@ -183,9 +183,9 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   # Link for conf files (let's ease the user's life)
   USER_HOME=`sudo -Hu $INSTALL_USER sh -c 'echo $HOME'`
   sudo -Hu $INSTALL_USER mkdir -vp "$USER_HOME/.datadog-agent"
-  rm -vf "$USER_HOME/.datadog-agent/conf.d" "$USER_HOME/.datadog-agent/datadog.conf" "$USER_HOME/.datadog-agent/checks.d"
+  rm -vf "$USER_HOME/.datadog-agent/conf.d" "$USER_HOME/.datadog-agent/stackstate.conf" "$USER_HOME/.datadog-agent/checks.d"
   sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/conf.d "$USER_HOME/.datadog-agent/conf.d"
-  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/datadog.conf "$USER_HOME/.datadog-agent/datadog.conf"
+  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/stackstate.conf "$USER_HOME/.datadog-agent/stackstate.conf"
   sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/checks.d "$USER_HOME/.datadog-agent/checks.d"
 
   # Error if app not properly installed or root
@@ -195,7 +195,7 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
     exit 1
   fi
 
-  if [ ! -e "$CONF_DIR/datadog.conf" ]; then
+  if [ ! -e "$CONF_DIR/stackstate.conf" ]; then
     exit 1
   fi
 

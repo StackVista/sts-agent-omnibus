@@ -6,8 +6,8 @@ namespace :agent do
     puts "Clean up generated files"
     sh "rm -rf /var/cache/omnibus/pkg/*"
     sh "rm -f /etc/init.d/datadog-agent"
-    sh "rm -rf /etc/dd-agent"
-    sh "rm -rf /opt/datadog-agent"
+    sh "rm -rf /etc/sts-agent"
+    sh "rm -rf /opt/stackstate-agent"
   end
 
   desc 'Pull the integrations repo'

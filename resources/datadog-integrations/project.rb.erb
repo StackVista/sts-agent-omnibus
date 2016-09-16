@@ -1,7 +1,7 @@
 name 'dd-check-<%= name %>'
 maintainer 'Datadog Packages <package@datadoghq.com>'
 homepage 'http://www.datadoghq.com'
-install_dir '/opt/datadog-agent'
+install_dir '/opt/stackstate-agent'
 
 build_version '<%= version %>'
 build_iteration <%= build_iteration %>
@@ -45,6 +45,6 @@ dependency 'dd-check-<%= name %>-software'
 
 extends_packages('datadog-agent', 'datadog')
 
-extra_package_file '/etc/dd-agent/conf.d/<%= name %>.yaml.example'
+extra_package_file '/etc/sts-agent/conf.d/<%= name %>.yaml.example'
 
 exclude '\.git*'

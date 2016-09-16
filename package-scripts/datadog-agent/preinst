@@ -1,6 +1,6 @@
 #! /bin/sh
 
-INSTALL_DIR=/opt/datadog-agent
+INSTALL_DIR=/opt/stackstate-agent
 LOG_DIR=/var/log/datadog
 mkdir -p $LOG_DIR
 
@@ -28,8 +28,8 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
     # Previous versions of dd-agent created this file but didn't do
     # anything with it.
-    if [ -f "/etc/dd-agent/supervisor_ddagent.conf" ]; then
-        rm /etc/dd-agent/supervisor_ddagent.conf
+    if [ -f "/etc/sts-agent/supervisor_ddagent.conf" ]; then
+        rm /etc/sts-agent/supervisor_ddagent.conf
     fi
 
     #DEBHELPER#
@@ -45,9 +45,9 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
     fi
 
     # Delete all the .pyc/.pyo files in the embedded dir that are part of the old agent's package
-    if [ -f "/opt/datadog-agent/embedded/.py_compiled_files.txt" ]; then
+    if [ -f "/opt/stackstate-agent/embedded/.py_compiled_files.txt" ]; then
         # (commented lines are filtered out)
-        cat /opt/datadog-agent/embedded/.py_compiled_files.txt | grep -v '^#' | xargs rm -f
+        cat /opt/stackstate-agent/embedded/.py_compiled_files.txt | grep -v '^#' | xargs rm -f
     fi
   else
     echo "[ ${Red}FAILED ${RCol}]\tYour system is currently not supported by this script.";
@@ -73,7 +73,7 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   LOG_FILE="$LOG_DIR/preinstall.log"
   exec > $LOG_FILE 2>&1
 
-  if [ -e "$CONF_DIR/datadog.conf" ]; then
+  if [ -e "$CONF_DIR/stackstate.conf" ]; then
     echo "# State at the beginning"
     echo "## Agent version"
     grep AGENT_VERSION $INSTALL_DIR/agent/config.py || echo "No config file"
@@ -90,8 +90,8 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
 
     # Save old conf
     mkdir -vp /tmp/{conf,checks}.d
-    rm -rvf /tmp/{checks,conf}.d/* /tmp/datadog.conf
-    cp -vf $CONF_DIR/datadog.conf /tmp
+    rm -rvf /tmp/{checks,conf}.d/* /tmp/stackstate.conf
+    cp -vf $CONF_DIR/stackstate.conf /tmp
     cp -vf $CONF_DIR/conf.d/*.yaml /tmp/conf.d
     cp -vfR $CONF_DIR/checks.d/* /tmp/checks.d
   fi

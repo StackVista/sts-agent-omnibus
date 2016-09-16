@@ -3,7 +3,7 @@ require "./lib/ostools.rb"
 name 'datadog-agent'
 maintainer 'Datadog Packages <package@datadoghq.com>'
 homepage 'http://www.datadoghq.com'
-install_dir '/opt/datadog-agent'
+install_dir '/opt/stackstate-agent'
 
 build_version do
   source :git, from_dependency: 'datadog-agent'
@@ -88,14 +88,14 @@ if linux?
   end
 
   # Supervisord config file for the agent
-  extra_package_file '/etc/dd-agent/supervisor.conf'
+  extra_package_file '/etc/sts-agent/supervisor.conf'
 
   # Example configuration files for the agent and the checks
-  extra_package_file '/etc/dd-agent/datadog.conf.example'
-  extra_package_file '/etc/dd-agent/conf.d'
+  extra_package_file '/etc/sts-agent/stackstate.conf.example'
+  extra_package_file '/etc/sts-agent/conf.d'
 
   # Custom checks directory
-  extra_package_file '/etc/dd-agent/checks.d'
+  extra_package_file '/etc/sts-agent/checks.d'
 
   # Just a dummy file that needs to be in the RPM package list if we don't want it to be removed
   # during RPM upgrades. (the old files from the RPM file listthat are not in the new RPM file

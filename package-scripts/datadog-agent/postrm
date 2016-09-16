@@ -9,9 +9,9 @@ if [ -f "/etc/debian_version" ] || [ "$LINUX_DISTRIBUTION" == "Debian" ] || [ "$
         deluser dd-agent --quiet
         echo "Deleting dd-agent group"
         getent group dd-agent >/dev/null && delgroup dd-agent --quiet || true
-        rm -rf /opt/datadog-agent
+        rm -rf /opt/stackstate-agent
         rm -rf /var/log/datadog
-        rm -rf /etc/dd-agent
+        rm -rf /etc/sts-agent
         rm -rf /var/log/datadog
     fi
 elif [ -f "/etc/redhat-release" ] || [ "$LINUX_DISTRIBUTION" == "RedHat" ] || [ "$LINUX_DISTRIBUTION" == "CentOS" ] || [ "$LINUX_DISTRIBUTION" == "openSUSE" ] || [ "$LINUX_DISTRIBUTION" == "Amazon" ]; then

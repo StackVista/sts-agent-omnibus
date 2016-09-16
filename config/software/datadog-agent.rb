@@ -36,25 +36,25 @@ build do
 
   if linux?
     # Configuration files
-    mkdir '/etc/dd-agent'
+    mkdir '/etc/sts-agent'
       if ohai['platform_family'] == 'rhel'
         copy 'packaging/centos/datadog-agent.init', '/etc/rc.d/init.d/datadog-agent'
       elsif ohai['platform_family'] == 'debian'
         copy 'packaging/debian/datadog-agent.init', '/etc/init.d/datadog-agent'
         mkdir '/lib/systemd/system'
         copy 'packaging/debian/datadog-agent.service', '/lib/systemd/system/datadog-agent.service'
-        copy 'packaging/debian/start_agent.sh', '/opt/datadog-agent/bin/start_agent.sh'
-        command 'chmod 755 /opt/datadog-agent/bin/start_agent.sh'
+        copy 'packaging/debian/start_agent.sh', '/opt/stackstate-agent/bin/start_agent.sh'
+        command 'chmod 755 /opt/stackstate-agent/bin/start_agent.sh'
       end
       # Use a supervisor conf with go-metro on 64-bit platforms only
       if ohai['kernel']['machine'] == 'x86_64'
-        copy 'packaging/supervisor.conf', '/etc/dd-agent/supervisor.conf'
+        copy 'packaging/supervisor.conf', '/etc/sts-agent/supervisor.conf'
       else
-        copy 'packaging/supervisor_32.conf', '/etc/dd-agent/supervisor.conf'
+        copy 'packaging/supervisor_32.conf', '/etc/sts-agent/supervisor.conf'
       end
-      copy 'datadog.conf.example', '/etc/dd-agent/datadog.conf.example'
-      copy 'conf.d', '/etc/dd-agent/'
-      mkdir '/etc/dd-agent/checks.d/'
+      copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
+      copy 'conf.d', '/etc/sts-agent/'
+      mkdir '/etc/sts-agent/checks.d/'
       command 'chmod 755 /etc/init.d/datadog-agent'
       touch '/usr/bin/dd-agent'
 
@@ -125,7 +125,7 @@ build do
     # conf
     mkdir "#{install_dir}/etc"
     copy "packaging/osx/supervisor.conf", "#{install_dir}/etc/supervisor.conf"
-    copy 'datadog.conf.example', "#{install_dir}/etc/datadog.conf.example"
+    copy 'stackstate.conf.example', "#{install_dir}/etc/stackstate.conf.example"
     command "cp -R conf.d #{install_dir}/etc/"
     copy 'packaging/osx/com.datadoghq.Agent.plist.example', "#{install_dir}/etc/"
   end
