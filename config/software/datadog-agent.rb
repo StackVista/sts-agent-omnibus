@@ -38,11 +38,11 @@ build do
     # Configuration files
     mkdir '/etc/sts-agent'
       if ohai['platform_family'] == 'rhel'
-        copy 'packaging/centos/stackstate-agent.init', '/etc/rc.d/init.d/stackstate-agent'
+        copy 'packaging/centos/datadog-agent.init', '/etc/rc.d/init.d/stackstate-agent'
       elsif ohai['platform_family'] == 'debian'
-        copy 'packaging/debian/stackstate-agent.init', '/etc/init.d/stackstate-agent'
+        copy 'packaging/debian/datadog-agent.init', '/etc/init.d/stackstate-agent'
         mkdir '/lib/systemd/system'
-        copy 'packaging/debian/stackstate-agent.service', '/lib/systemd/system/stackstate-agent.service'
+        copy 'packaging/debian/datadog-agent.service', '/lib/systemd/system/stackstate-agent.service'
         copy 'packaging/debian/start_agent.sh', '/opt/stackstate-agent/bin/start_agent.sh'
         command 'chmod 755 /opt/stackstate-agent/bin/start_agent.sh'
       end
@@ -78,11 +78,11 @@ build do
                       ' @executable_path/../Frameworks/libpyside-python2.7.1.2.dylib '
 
     # Command line tool
-    copy 'packaging/osx/stackstate-agent', "#{install_dir}/bin"
+    copy 'packaging/osx/datadog-agent', "#{install_dir}/bin"
     command "chmod 755 #{install_dir}/bin/stackstate-agent"
 
     # GUI
-    copy 'packaging/stackstate-agent/win32/install_files/guidata/images', "#{install_dir}/agent"
+    copy 'packaging/datadog-agent/win32/install_files/guidata/images', "#{install_dir}/agent"
     copy 'win32/gui.py', "#{install_dir}/agent"
     copy 'win32/status.html', "#{install_dir}/agent"
     mkdir "#{install_dir}/agent/packaging"
