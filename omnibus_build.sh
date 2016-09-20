@@ -11,7 +11,7 @@ ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts
 ssh-add /sts-build-keys/id_rsa
 
 export PROJECT_DIR=sts-agent-omnibus
-export PROJECT_NAME=stackstate-agent
+export PROJECT_NAME=datadog-agent
 export LOG_LEVEL=${LOG_LEVEL:-"info"}
 export OMNIBUS_BRANCH=${OMNIBUS_BRANCH:-"master"}
 export OMNIBUS_SOFTWARE_BRANCH=${OMNIBUS_SOFTWARE_BRANCH:-"master"}

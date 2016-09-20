@@ -38,11 +38,11 @@ build do
     # Configuration files
     mkdir '/etc/sts-agent'
       if ohai['platform_family'] == 'rhel'
-        copy 'packaging/centos/datadog-agent.init', '/etc/rc.d/init.d/datadog-agent'
+        copy 'packaging/centos/stackstate-agent.init', '/etc/rc.d/init.d/stcakstate-agent'
       elsif ohai['platform_family'] == 'debian'
-        copy 'packaging/debian/datadog-agent.init', '/etc/init.d/datadog-agent'
+        copy 'packaging/debian/stackstate-agent.init', '/etc/init.d/stcakstate-agent'
         mkdir '/lib/systemd/system'
-        copy 'packaging/debian/datadog-agent.service', '/lib/systemd/system/datadog-agent.service'
+        copy 'packaging/debian/stackstate-agent.service', '/lib/systemd/system/stcakstate-agent.service'
         copy 'packaging/debian/start_agent.sh', '/opt/stackstate-agent/bin/start_agent.sh'
         command 'chmod 755 /opt/stackstate-agent/bin/start_agent.sh'
       end
@@ -55,8 +55,8 @@ build do
       copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
       copy 'conf.d', '/etc/sts-agent/'
       mkdir '/etc/sts-agent/checks.d/'
-      command 'chmod 755 /etc/init.d/datadog-agent'
-      touch '/usr/bin/dd-agent'
+      command 'chmod 755 /etc/init.d/stackstate-agent'
+      touch '/usr/bin/sts-agent'
 
       # Remove the .pyc and .pyo files from the package and list them in a file
       # so that the prerm script knows which compiled files to remove
@@ -78,11 +78,11 @@ build do
                       ' @executable_path/../Frameworks/libpyside-python2.7.1.2.dylib '
 
     # Command line tool
-    copy 'packaging/osx/datadog-agent', "#{install_dir}/bin"
-    command "chmod 755 #{install_dir}/bin/datadog-agent"
+    copy 'packaging/osx/stackstate-agent', "#{install_dir}/bin"
+    command "chmod 755 #{install_dir}/bin/stackstate-agent"
 
     # GUI
-    copy 'packaging/datadog-agent/win32/install_files/guidata/images', "#{install_dir}/agent"
+    copy 'packaging/stackstate-agent/win32/install_files/guidata/images', "#{install_dir}/agent"
     copy 'win32/gui.py', "#{install_dir}/agent"
     copy 'win32/status.html', "#{install_dir}/agent"
     mkdir "#{install_dir}/agent/packaging"

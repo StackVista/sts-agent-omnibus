@@ -1,7 +1,7 @@
 #!/bin/sh
 
 INSTALL_DIR=/opt/stackstate-agent
-LOG_DIR=/var/log/datadog
+LOG_DIR=/var/log/stackstate
 RUN_DIR=$INSTALL_DIR/run
 
 DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon)" /etc/issue 2>/dev/null || uname -s)
@@ -16,7 +16,7 @@ mkdir -p ${LOG_DIR} || error_exit "Cannot create ${LOG_DIR}!"
 
 # If we are inside the Docker container, do nothing
 if [ -n "$DOCKER_DD_AGENT" ]; then
-  echo "Installation from docker-dd-agent, nothing to do in postinst"
+  echo "Installation from docker-sts-agent, nothing to do in postinst"
   exit 0
 fi
 
@@ -37,24 +37,24 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
       set -e
       case "$1" in
           configure)
-              echo "Registering service datadog-agent"
-              update-rc.d datadog-agent defaults
-              echo "Enabling service datadog-agent"
-              update-rc.d datadog-agent enable >/dev/null 2>&1
-              # Only create dd-agent group and/or user if they don't already exist
-              getent group dd-agent >/dev/null || echo "Creating dd-agent group" && addgroup --system dd-agent --quiet
+              echo "Registering service stackstate-agent"
+              update-rc.d stackstate-agent defaults
+              echo "Enabling service stackstate-agent"
+              update-rc.d stackstate-agent enable >/dev/null 2>&1
+              # Only create sts-agent group and/or user if they don't already exist
+              getent group sts-agent >/dev/null || echo "Creating sts-agent group" && addgroup --system sts-agent --quiet
               set +e
-              id -u dd-agent >/dev/null 2>&1
+              id -u sts-agent >/dev/null 2>&1
               USER_EXISTS=$?
               set -e
               if [ ! $USER_EXISTS -eq 0 ]; then
-                  echo "Creating dd-agent user"
-                  adduser --system dd-agent --disabled-login --shell /bin/sh --no-create-home --group --quiet
-                  usermod -d /opt/stackstate-agent dd-agent
-              elif id -nG dd-agent | grep --invert-match --word-regexp --quiet 'dd-agent'; then
-                  # User exists but is not part of the dd-agent group
-                  echo "Adding dd-agent user to dd-agent group"
-                  usermod -g dd-agent dd-agent
+                  echo "Creating sts-agent user"
+                  adduser --system sts-agent --disabled-login --shell /bin/sh --no-create-home --group --quiet
+                  usermod -d /opt/stackstate-agent sts-agent
+              elif id -nG sts-agent | grep --invert-match --word-regexp --quiet 'sts-agent'; then
+                  # User exists but is not part of the sts-agent group
+                  echo "Adding sts-agent user to sts-agent group"
+                  usermod -g sts-agent sts-agent
               fi
               set +e
           ;;
@@ -67,21 +67,21 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
       #DEBHELPER#
   fi
 
-  # Set proper rights to the dd-agent user
-  chown -R dd-agent:root ${CONFIG_DIR}
-  chown -R dd-agent:root ${LOG_DIR}
-  chown root:root /etc/init.d/datadog-agent
+  # Set proper rights to the sts-agent user
+  chown -R sts-agent:root ${CONFIG_DIR}
+  chown -R sts-agent:root ${LOG_DIR}
+  chown root:root /etc/init.d/stackstate-agent
   chown -R root:root /opt/stackstate-agent
-  chown -R dd-agent:root ${RUN_DIR}
+  chown -R sts-agent:root ${RUN_DIR}
 
   if command -v chkconfig >/dev/null 2>&1; then
-      chkconfig --add datadog-agent
+      chkconfig --add stackstate-agent
   fi
 
   # Create symlinks to the various agent's components
-  ln -sf $INSTALL_DIR/agent/agent.py /usr/bin/dd-agent
-  chown -R dd-agent:root /usr/bin/dd-agent
-  chmod 755 /usr/bin/dd-agent
+  ln -sf $INSTALL_DIR/agent/agent.py /usr/bin/sts-agent
+  chown -R sts-agent:root /usr/bin/sts-agent
+  chmod 755 /usr/bin/sts-agent
 
   # The configcheck call will return zero if the config is valid, which means we
   # can restart the agent without taking the risk to trigger an error in the
@@ -90,14 +90,14 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   # did its job and exist zero, otherwise, if the file exists but it's wrong we
   # have to return a non zero exit status so that the system (and the user) are
   # notified the installation went wrong.
-  /etc/init.d/datadog-agent configcheck
+  /etc/init.d/stackstate-agent configcheck
   RETVAL=$?
   if [ $RETVAL -eq 0 ]; then
-      echo "(Re)starting datadog-agent now..."
+      echo "(Re)starting stackstate-agent now..."
       if command -v invoke-rc.d >/dev/null 2>&1; then
-          invoke-rc.d datadog-agent restart
+          invoke-rc.d stackstate-agent restart
       else
-          /etc/init.d/datadog-agent restart
+          /etc/init.d/stackstate-agent restart
       fi
   fi
 
@@ -113,8 +113,8 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 # OSX installation
 elif [ "$DISTRIBUTION" = "Darwin" ]; then
   # OSX specific variables
-  OPT_APP_DIR="$INSTALL_DIR/Datadog Agent.app"
-  APP_DIR="/Applications/Datadog Agent.app"
+  OPT_APP_DIR="$INSTALL_DIR/StackState Agent.app"
+  APP_DIR="/Applications/StackState Agent.app"
   CONF_DIR=$INSTALL_DIR/etc
   RUN_DIR=$INSTALL_DIR/run
 
@@ -176,17 +176,17 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   chown -v $INSTALL_USER:admin $CONF_DIR/stackstate.conf
   chown -vR $INSTALL_USER:admin $CONF_DIR/conf.d $CONF_DIR/checks.d
 
-  # `datadog-agent` command line
+  # `stackstate-agent` command line
   mkdir -vp /usr/local/bin
-  ln -vs $INSTALL_DIR/bin/datadog-agent /usr/local/bin/datadog-agent
+  ln -vs $INSTALL_DIR/bin/stackstate-agent /usr/local/bin/stackstate-agent
 
   # Link for conf files (let's ease the user's life)
   USER_HOME=`sudo -Hu $INSTALL_USER sh -c 'echo $HOME'`
-  sudo -Hu $INSTALL_USER mkdir -vp "$USER_HOME/.datadog-agent"
-  rm -vf "$USER_HOME/.datadog-agent/conf.d" "$USER_HOME/.datadog-agent/stackstate.conf" "$USER_HOME/.datadog-agent/checks.d"
-  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/conf.d "$USER_HOME/.datadog-agent/conf.d"
-  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/stackstate.conf "$USER_HOME/.datadog-agent/stackstate.conf"
-  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/checks.d "$USER_HOME/.datadog-agent/checks.d"
+  sudo -Hu $INSTALL_USER mkdir -vp "$USER_HOME/.stackstate-agent"
+  rm -vf "$USER_HOME/.stackstate-agent/conf.d" "$USER_HOME/.stackstate-agent/stackstate.conf" "$USER_HOME/.stackstate-agent/checks.d"
+  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/conf.d "$USER_HOME/.stackstate-agent/conf.d"
+  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/stackstate.conf "$USER_HOME/.stackstate-agent/stackstate.conf"
+  sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/checks.d "$USER_HOME/.stackstate-agent/checks.d"
 
   # Error if app not properly installed or root
   if [ "$INSTALL_USER" == "root" ]; then

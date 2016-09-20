@@ -4,9 +4,9 @@
 # It is run at the very end of an install/upgrade of the package
 # It is NOT run on removal of the package
 
-getent group dd-agent >/dev/null || groupadd -r dd-agent
-getent passwd dd-agent >/dev/null || \
-    useradd -r -M -g dd-agent -d /usr/share/datadog/agent -s /bin/sh \
-    -c "Datadog Agent" dd-agent
-/etc/init.d/datadog-agent restart
+getent group sts-agent >/dev/null || groupadd -r sts-agent
+getent passwd sts-agent >/dev/null || \
+    useradd -r -M -g sts-agent -d /usr/share/stackstate/agent -s /bin/sh \
+    -c "StackState Agent" sts-agent
+/etc/init.d/stackstate-agent restart
 exit 0

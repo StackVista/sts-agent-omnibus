@@ -5,21 +5,21 @@ if [ -f "/etc/debian_version" ] || [ "$LINUX_DISTRIBUTION" == "Debian" ] || [ "$
     set -e
 
     if [ "$1" = purge ]; then
-        echo "Deleting dd-agent user"
-        deluser dd-agent --quiet
-        echo "Deleting dd-agent group"
-        getent group dd-agent >/dev/null && delgroup dd-agent --quiet || true
+        echo "Deleting sts-agent user"
+        deluser sts-agent --quiet
+        echo "Deleting sts-agent group"
+        getent group sts-agent >/dev/null && delgroup sts-agent --quiet || true
         rm -rf /opt/stackstate-agent
-        rm -rf /var/log/datadog
+        rm -rf /var/log/stackstate
         rm -rf /etc/sts-agent
-        rm -rf /var/log/datadog
+        rm -rf /var/log/stackstate
     fi
 elif [ -f "/etc/redhat-release" ] || [ "$LINUX_DISTRIBUTION" == "RedHat" ] || [ "$LINUX_DISTRIBUTION" == "CentOS" ] || [ "$LINUX_DISTRIBUTION" == "openSUSE" ] || [ "$LINUX_DISTRIBUTION" == "Amazon" ]; then
     case "$*" in
       0)
         # We're uninstalling.
-        getent passwd dd-agent > /dev/null && userdel dd-agent
-        getent group dd-agent >/dev/null && groupdel dd-agent
+        getent passwd sts-agent > /dev/null && userdel sts-agent
+        getent group sts-agent >/dev/null && groupdel sts-agent
         ;;
       1)
         # We're upgrading.
