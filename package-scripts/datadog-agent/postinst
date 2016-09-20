@@ -190,8 +190,8 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
 
   # Error if app not properly installed or root
   if [ "$INSTALL_USER" == "root" ]; then
-    echo 'INSTALL_USER is set to root, Datadog Agent app has been installed'
-    echo 'but is not configured. Running Datadog Agent as root is not advised!'
+    echo 'INSTALL_USER is set to root, StackState Agent app has been installed'
+    echo 'but is not configured. Running StackState Agent as root is not advised!'
     exit 1
   fi
 
@@ -204,11 +204,11 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
     echo "# Starting the app"
     # -a for application, -F for fresh, do not restore old app
     export TMPDIR=`sudo -u $INSTALL_USER getconf DARWIN_USER_TEMP_DIR`
-    sudo -u $INSTALL_USER open -Fa 'Datadog Agent'
+    sudo -u $INSTALL_USER open -Fa 'StackState Agent'
   fi
 
   echo "# Configuring the login launch of the app"
-  sudo -u $INSTALL_USER osascript -e 'tell application "System Events" to delete every login item whose name is "Datadog Agent"'
+  sudo -u $INSTALL_USER osascript -e 'tell application "System Events" to delete every login item whose name is "StackState Agent"'
   sudo -u $INSTALL_USER osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Datadog Agent.app", name:"Datadog Agent", hidden:false}'
 
   # A little debriefing won't hurt

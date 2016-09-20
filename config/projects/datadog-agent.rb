@@ -12,9 +12,9 @@ end
 
 build_iteration 1
 
-description 'Datadog Monitoring Agent
- The Datadog Monitoring Agent is a lightweight process that monitors system
- processes and services, and sends information back to your Datadog account.
+description 'StackState Monitoring Agent
+ The StackState Monitoring Agent is a lightweight process that monitors system
+ processes and services, and sends information to StackState.
  .
  This package installs and runs the advanced Agent daemon, which queues and
  forwards metrics from your applications as well as system services.
