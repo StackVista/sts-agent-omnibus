@@ -38,11 +38,11 @@ build do
     # Configuration files
     mkdir '/etc/sts-agent'
       if ohai['platform_family'] == 'rhel'
-        copy 'packaging/centos/stackstate-agent.init', '/etc/rc.d/init.d/stcakstate-agent'
+        copy 'packaging/centos/stackstate-agent.init', '/etc/rc.d/init.d/stackstate-agent'
       elsif ohai['platform_family'] == 'debian'
-        copy 'packaging/debian/stackstate-agent.init', '/etc/init.d/stcakstate-agent'
+        copy 'packaging/debian/stackstate-agent.init', '/etc/init.d/stackstate-agent'
         mkdir '/lib/systemd/system'
-        copy 'packaging/debian/stackstate-agent.service', '/lib/systemd/system/stcakstate-agent.service'
+        copy 'packaging/debian/stackstate-agent.service', '/lib/systemd/system/stackstate-agent.service'
         copy 'packaging/debian/start_agent.sh', '/opt/stackstate-agent/bin/start_agent.sh'
         command 'chmod 755 /opt/stackstate-agent/bin/start_agent.sh'
       end

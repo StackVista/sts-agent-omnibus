@@ -70,7 +70,7 @@ if linux?
 
   # SysVInit service file
   if redhat?
-    extra_package_file '/etc/rc.d/init.d/stcakstate-agent'
+    extra_package_file '/etc/rc.d/init.d/stackstate-agent'
   else
     extra_package_file '/etc/init.d/stackstate-agent'
   end
