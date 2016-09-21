@@ -19,7 +19,7 @@ description 'StackState Monitoring Agent
  This package installs and runs the advanced Agent daemon, which queues and
  forwards metrics from your applications as well as system services.
  .
- See http://www.datadoghq.com/ for more information
+ See http://www.stackstate.com/ for more information
 '
 
 # ------------------------------------
