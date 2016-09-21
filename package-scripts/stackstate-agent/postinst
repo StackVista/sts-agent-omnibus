@@ -139,8 +139,8 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   # If it fails, no choice but to use root :'(
   if [ -z "$INSTALL_USER" ] || [ "$INSTALL_USER" == "root" ]; then
     SCRIPT_INSTALL="yes"
-    INSTALL_USER=`cat /tmp/datadog-install-user || echo 'root'`
-    rm -v /tmp/datadog-install-user || true
+    INSTALL_USER=`cat /tmp/stackstate-install-user || echo 'root'`
+    rm -v /tmp/stackstate-install-user || true
   fi
   echo "INSTALL_USER: $INSTALL_USER"
 
@@ -157,7 +157,7 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   chmod -v 755 "$RUN_DIR"
 
   echo "# Creating default plist"
-  sed "s|USER_NAME|$INSTALL_USER|" "$CONF_DIR/com.datadoghq.Agent.plist.example" > "$CONF_DIR/com.datadoghq.Agent.plist"
+  sed "s|USER_NAME|$INSTALL_USER|" "$CONF_DIR/com.stackstate.Agent.plist.example" > "$CONF_DIR/com.stackstate.Agent.plist"
 
   echo "# Copying conf"
   mkdir -vp $CONF_DIR/checks.d
@@ -209,7 +209,8 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
 
   echo "# Configuring the login launch of the app"
   sudo -u $INSTALL_USER osascript -e 'tell application "System Events" to delete every login item whose name is "StackState Agent"'
-  sudo -u $INSTALL_USER osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Datadog Agent.app", name:"Datadog Agent", hidden:false}'
+  sudo -u $INSTALL_USER osascript -e 'tell application "System Events" to make login item
+  at end with properties {path:"/Applications/StackState Agent.app", name:"StackState Agent", hidden:false}'
 
   # A little debriefing won't hurt
   echo "# State at the end"

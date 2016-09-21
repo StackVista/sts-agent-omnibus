@@ -68,7 +68,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 elif [ "$DISTRIBUTION" = "Darwin" ]; then
   DD_COMMAND="$INSTALL_DIR/bin/stackstate-agent"
   CONF_DIR="$INSTALL_DIR/etc"
-  APP_DIR="/Applications/Datadog Agent.app"
+  APP_DIR="/Applications/StackState Agent.app"
 
   LOG_FILE="$LOG_DIR/preinstall.log"
   exec > $LOG_FILE 2>&1
@@ -84,9 +84,9 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
 
     echo '# Stop old agent'
     $DD_COMMAND stop || true
-    kill `ps aux | grep 'Datadog Agent.app' | grep -v grep  | cut -d ' ' -f 4` || true
+    kill `ps aux | grep 'StackState Agent.app' | grep -v grep  | cut -d ' ' -f 4` || true
 
-    echo '# Stop old GUI'okill `ps aux | grep 'Datadog Agent.app' | grep -v grep | awk '{ print $2 }'` || true
+    echo '# Stop old GUI'okill `ps aux | grep 'StackState Agent.app' | grep -v grep | awk '{ print $2 }'` || true
 
     # Save old conf
     mkdir -vp /tmp/{conf,checks}.d
