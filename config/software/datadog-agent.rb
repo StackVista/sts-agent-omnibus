@@ -20,7 +20,7 @@ end
 relative_path 'sts-agent'
 
 build do
-  ship_license 'https://raw.githubusercontent.com/DataDog/dd-agent/master/LICENSE'
+  ship_license 'https://raw.githubusercontent.com/StackVista/sts-agent/manual_renames/LICENSE'
   # Agent code
   mkdir  "#{install_dir}/agent/"
   copy 'checks.d', "#{install_dir}/agent/"
