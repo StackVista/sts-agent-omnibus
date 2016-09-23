@@ -1,9 +1,9 @@
 require "./lib/ostools.rb"
 
-name 'datadog-agent'
-maintainer 'Datadog Packages <package@datadoghq.com>'
-homepage 'http://www.datadoghq.com'
-install_dir '/opt/datadog-agent'
+name 'stackstate-agent'
+maintainer 'StackState <info@stackstate.com>'
+homepage 'http://www.stackstate.com'
+install_dir '/opt/stackstate-agent'
 
 build_version do
   source :git, from_dependency: 'datadog-agent'
@@ -12,14 +12,14 @@ end
 
 build_iteration 1
 
-description 'Datadog Monitoring Agent
- The Datadog Monitoring Agent is a lightweight process that monitors system
- processes and services, and sends information back to your Datadog account.
+description 'StackState Monitoring Agent
+ The StackState Monitoring Agent is a lightweight process that monitors system
+ processes and services, and sends information to StackState.
  .
  This package installs and runs the advanced Agent daemon, which queues and
  forwards metrics from your applications as well as system services.
  .
- See http://www.datadoghq.com/ for more information
+ See http://www.stackstate.com/ for more information
 '
 
 # ------------------------------------
@@ -28,7 +28,7 @@ description 'Datadog Monitoring Agent
 
 # .deb specific flags
 package :deb do
-  vendor 'Datadog <info@datadoghq.com>'
+  vendor 'StackState <info@stackstate.com>'
   epoch 1
   license 'Simplified BSD License'
   section 'utils'
@@ -37,7 +37,7 @@ end
 
 # .rpm specific flags
 package :rpm do
-  vendor 'Datadog <package@datadoghq.com>'
+  vendor 'StackState <info@stackstate.com>'
   epoch 1
   license 'Simplified BSD License'
   category 'System Environment/Daemons'
@@ -57,18 +57,6 @@ compress :dmg do
   pkg_position '10, 10'
 end
 
-# Note: this is to try to avoid issues when upgrading from an
-# old version of the agent which shipped also a datadog-agent-base
-# package.
-if redhat?
-  replace 'datadog-agent-base < 5.0.0'
-  replace 'datadog-agent-lib < 5.0.0'
-elsif debian?
-  replace 'datadog-agent-base (<< 5.0.0)'
-  replace 'datadog-agent-lib (<< 5.0.0)'
-  conflict 'datadog-agent-base (<< 5.0.0)'
-end
-
 # ------------------------------------
 # OS specific DSLs and dependencies
 # ------------------------------------
@@ -77,30 +65,30 @@ end
 if linux?
   # Debian
   if debian?
-    extra_package_file '/lib/systemd/system/datadog-agent.service'
+    extra_package_file '/lib/systemd/system/stackstate-agent.service'
   end
 
   # SysVInit service file
   if redhat?
-    extra_package_file '/etc/rc.d/init.d/datadog-agent'
+    extra_package_file '/etc/rc.d/init.d/stackstate-agent'
   else
-    extra_package_file '/etc/init.d/datadog-agent'
+    extra_package_file '/etc/init.d/stackstate-agent'
   end
 
   # Supervisord config file for the agent
-  extra_package_file '/etc/dd-agent/supervisor.conf'
+  extra_package_file '/etc/sts-agent/supervisor.conf'
 
   # Example configuration files for the agent and the checks
-  extra_package_file '/etc/dd-agent/datadog.conf.example'
-  extra_package_file '/etc/dd-agent/conf.d'
+  extra_package_file '/etc/sts-agent/stackstate.conf.example'
+  extra_package_file '/etc/sts-agent/conf.d'
 
   # Custom checks directory
-  extra_package_file '/etc/dd-agent/checks.d'
+  extra_package_file '/etc/sts-agent/checks.d'
 
   # Just a dummy file that needs to be in the RPM package list if we don't want it to be removed
   # during RPM upgrades. (the old files from the RPM file listthat are not in the new RPM file
   # list will get removed, that's why we need this one here)
-  extra_package_file '/usr/bin/dd-agent'
+  extra_package_file '/usr/bin/sts-agent'
 
   # Linux-specific dependencies
   dependency 'procps-ng'

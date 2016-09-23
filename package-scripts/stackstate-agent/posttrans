@@ -1,0 +1,12 @@
+#! /bin/sh
+
+# This script is RPM-specific
+# It is run at the very end of an install/upgrade of the package
+# It is NOT run on removal of the package
+
+getent group sts-agent >/dev/null || groupadd -r sts-agent
+getent passwd sts-agent >/dev/null || \
+    useradd -r -M -g sts-agent -d /usr/share/stackstate/agent -s /bin/sh \
+    -c "StackState Agent" sts-agent
+/etc/init.d/stackstate-agent restart
+exit 0
