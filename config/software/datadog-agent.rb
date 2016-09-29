@@ -59,8 +59,8 @@ build do
       end
       copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
       copy "#{connbeat_dir}/linux/connbeat", '/opt/stackstate-agent/bin'
+      copy "#{connbeat_dir}/linux/connbeat.yml", '/etc/sts-agent'
       copy "connbeat.sh", '/opt/stackstate-agent/bin'
-      copy "#{connbeat_dir}/linux/connbeat.yml", '/etc/sts-agent/connbeat.yml.example'
       copy 'conf.d', '/etc/sts-agent/'
       mkdir '/etc/sts-agent/checks.d/'
       command 'chmod 755 /etc/init.d/stackstate-agent'
