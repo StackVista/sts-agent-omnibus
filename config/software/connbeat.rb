@@ -10,6 +10,6 @@ end
 build do
   ship_license "https://raw.githubusercontent.com/raboof/connbeat/master/LICENSE.md"
 
-  mkdir '#{install_dir}/bin'
-    copy "#{connbeat_dir}/linux/connbeat", '#{install_dir}/bin/connbeat'
+  mkdir "#{install_dir}/bin"
+    copy "#{connbeat_dir}/linux/connbeat", "#{install_dir}/bin"
 end
