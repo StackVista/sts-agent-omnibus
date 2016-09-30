@@ -17,11 +17,6 @@ else
   default_version agent_branch
 end
 
-connbeat_dir = ENV['CONNBEAT_DIST_DIR']
-if connbeat_dir.nil? || connbeat_dir.empty?
-  abort("Expecting CONNBEAT_DIST_DIR that points to Connection Beat distribution.")
-end
-
 relative_path 'sts-agent'
 
 build do
@@ -58,9 +53,6 @@ build do
         copy 'packaging/supervisor_32.conf', '/etc/sts-agent/supervisor.conf'
       end
       copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
-      copy "#{connbeat_dir}/linux/connbeat", '/opt/stackstate-agent/bin'
-      copy "#{connbeat_dir}/linux/connbeat.yml", '/etc/sts-agent'
-      copy "connbeat.sh", '/opt/stackstate-agent/bin'
       copy 'conf.d', '/etc/sts-agent/'
       mkdir '/etc/sts-agent/checks.d/'
       command 'chmod 755 /etc/init.d/stackstate-agent'
