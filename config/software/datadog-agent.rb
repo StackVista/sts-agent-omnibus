@@ -53,6 +53,8 @@ build do
         copy 'packaging/supervisor_32.conf', '/etc/sts-agent/supervisor.conf'
       end
       copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
+      copy 'connbeat.sh', '/opt/stackstate-agent/bin/connbeat.sh'
+      copy 'connbeat.yml', '/etc/sts-agent/connbeat.yml'
       copy 'conf.d', '/etc/sts-agent/'
       mkdir '/etc/sts-agent/checks.d/'
       command 'chmod 755 /etc/init.d/stackstate-agent'
