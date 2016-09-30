@@ -9,5 +9,7 @@ end
 
 build do
   ship_license "https://raw.githubusercontent.com/raboof/connbeat/master/LICENSE.md"
-  copy "#{connbeat_dir}/linux/connbeat", '/opt/stackstate-agent/bin'
+
+  mkdir '#{install_dir}/bin'
+    copy "#{connbeat_dir}/linux/connbeat", '#{install_dir}/bin/connbeat'
 end
