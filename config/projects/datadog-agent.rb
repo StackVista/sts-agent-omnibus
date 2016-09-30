@@ -75,6 +75,10 @@ if linux?
     extra_package_file '/etc/init.d/stackstate-agent'
   end
 
+  # connbeat, specific to linux
+  extra_package_file '/etc/sts-agent/connbeat.yml'
+  dependency 'connbeat'
+
   # Supervisord config file for the agent
   extra_package_file '/etc/sts-agent/supervisor.conf'
 
@@ -122,6 +126,9 @@ dependency 'tornado'
 dependency 'uptime'
 dependency 'uuid'
 dependency 'zlib'
+
+#connection beat
+dependency 'connbeat'
 
 # Check dependencies
 dependency 'adodbapi'
