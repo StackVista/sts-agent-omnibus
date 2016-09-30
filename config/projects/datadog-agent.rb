@@ -127,9 +127,6 @@ dependency 'uptime'
 dependency 'uuid'
 dependency 'zlib'
 
-#connection beat
-dependency 'connbeat'
-
 # Check dependencies
 dependency 'adodbapi'
 dependency 'dnspython'
