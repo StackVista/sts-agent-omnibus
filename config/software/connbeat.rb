@@ -8,6 +8,6 @@ if connbeat_dir.nil? || connbeat_dir.empty?
 end
 
 build do
-  ship_license "https://github.com/raboof/connbeat/blob/master/LICENSE.md"
+  ship_license "https://raw.githubusercontent.com/raboof/connbeat/master/LICENSE.md"
   copy "#{connbeat_dir}/linux/connbeat", '/opt/stackstate-agent/bin'
 end
