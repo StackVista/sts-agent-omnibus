@@ -12,6 +12,5 @@ build do
 
   mkdir "#{install_dir}/bin"
     copy "#{connbeat_dir}/linux/connbeat", "#{install_dir}/bin"
-    command "chmod 4755 #{install_dir}/bin/connbeat"
   mkdir "/var/lib/stackstate/connbeat"
 end

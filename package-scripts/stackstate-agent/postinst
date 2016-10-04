@@ -75,6 +75,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   chown root:root /etc/init.d/stackstate-agent
   chown -R root:root /opt/stackstate-agent
   chown -R sts-agent:root ${RUN_DIR}
+  chmod 4755 /opt/stackstate-agent/bin/connbeat
 
   if command -v chkconfig >/dev/null 2>&1; then
       chkconfig --add stackstate-agent
