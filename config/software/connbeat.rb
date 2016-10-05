@@ -12,5 +12,5 @@ build do
 
   mkdir "#{install_dir}/bin"
     copy "#{connbeat_dir}/linux/connbeat", "#{install_dir}/bin"
-  mkdir "/var/lib/stackstate/connbeat"  
+  mkdir "/var/lib/stackstate/connbeat"
 end
