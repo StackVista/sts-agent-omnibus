@@ -29,10 +29,17 @@ rm -f /etc/init.d/stackstate-agent
 rm -rf /etc/sts-agent
 rm -rf /opt/$PROJECT_NAME/*
 
+echo "Going into project dir"
+
 cd $PROJECT_DIR
+
+echo "Fetching dd-agent-omnibus-branch $OMNIBUS_BRANCH"
 
 # Allow to use a different dd-agent-omnibus branch
 git fetch --all
+
+echo "Fetched dd-agent-omnibus-branch $OMNIBUS_BRANCH"
+
 git checkout $OMNIBUS_BRANCH
 git reset --hard origin/$OMNIBUS_BRANCH
 
