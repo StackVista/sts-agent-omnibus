@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+set -o verbose
+
 ###########################
 #
 # WARNING: You need to rebuild the docker images if you do any changes to this file
