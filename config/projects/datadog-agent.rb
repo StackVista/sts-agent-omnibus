@@ -47,6 +47,10 @@ package :rpm do
   end
 end
 
+if redhat?
+  runtime_dependency 'initscripts'
+end
+
 # OSX .pkg specific flags
 package :pkg do
   identifier 'com.datadoghq.agent'
@@ -65,14 +69,18 @@ end
 if linux?
   # Debian
   if debian?
+    extra_package_file '/etc/init.d/stackstate-agent'
     extra_package_file '/lib/systemd/system/stackstate-agent.service'
   end
 
   # SysVInit service file
   if redhat?
     extra_package_file '/etc/rc.d/init.d/stackstate-agent'
-  else
+  end
+
+  if suse?
     extra_package_file '/etc/init.d/stackstate-agent'
+    extra_package_file '/usr/lib/systemd/system/stackstate-agent.service'
   end
 
   # connbeat, specific to linux
@@ -115,6 +123,7 @@ dependency 'preparation'
 dependency 'boto'
 dependency 'docker-py'
 dependency 'ntplib'
+dependency 'protobuf-py'
 dependency 'pycrypto'
 dependency 'pyopenssl'
 dependency 'python-consul'
@@ -129,6 +138,7 @@ dependency 'zlib'
 
 # Check dependencies
 dependency 'adodbapi'
+dependency 'beautifulsoup4'
 dependency 'dnspython'
 dependency 'httplib2'
 dependency 'kafka-python'

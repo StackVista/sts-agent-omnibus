@@ -37,33 +37,44 @@ build do
   if linux?
     # Configuration files
     mkdir '/etc/sts-agent'
-      if ohai['platform_family'] == 'rhel'
-        copy 'packaging/centos/datadog-agent.init', '/etc/rc.d/init.d/stackstate-agent'
-      elsif ohai['platform_family'] == 'debian'
-        copy 'packaging/debian/datadog-agent.init', '/etc/init.d/stackstate-agent'
-        mkdir '/lib/systemd/system'
-        copy 'packaging/debian/datadog-agent.service', '/lib/systemd/system/stackstate-agent.service'
-        copy 'packaging/debian/start_agent.sh', '/opt/stackstate-agent/bin/start_agent.sh'
-        command 'chmod 755 /opt/stackstate-agent/bin/start_agent.sh'
-      end
-      # Use a supervisor conf with go-metro on 64-bit platforms only
-      if ohai['kernel']['machine'] == 'x86_64'
-        copy 'packaging/supervisor.conf', '/etc/sts-agent/supervisor.conf'
-      else
-        copy 'packaging/supervisor_32.conf', '/etc/sts-agent/supervisor.conf'
-      end
-      copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
-      copy 'connbeat.sh', '/opt/stackstate-agent/bin/connbeat.sh'
-      copy 'connbeat.yml', '/etc/sts-agent/connbeat.yml'
-      copy 'conf.d', '/etc/sts-agent/'
-      mkdir '/etc/sts-agent/checks.d/'
-      command 'chmod 755 /etc/init.d/stackstate-agent'
-      touch '/usr/bin/sts-agent'
+    if redhat?
+      copy 'packaging/centos/datadog-agent.init', '/etc/rc.d/init.d/stackstate-agent'
+    end
 
-      # Remove the .pyc and .pyo files from the package and list them in a file
-      # so that the prerm script knows which compiled files to remove
-      command "echo '# DO NOT REMOVE/MODIFY - used by package removal tasks' > #{install_dir}/embedded/.py_compiled_files.txt"
-      command "find #{install_dir}/embedded '(' -name '*.pyc' -o -name '*.pyo' ')' -type f -delete -print >> #{install_dir}/embedded/.py_compiled_files.txt"
+    if suse? || debian?
+      if debian?
+        sys_type = 'debian'
+        systemd_directory = '/lib/systemd/system'
+      elsif suse?
+        sys_type = 'suse'
+        systemd_directory = '/usr/lib/systemd/system'
+      end
+      copy "packaging/#{sys_type}/datadog-agent.init", '/etc/init.d/stackstate-agent'
+      mkdir systemd_directory
+      copy 'packaging/debian/datadog-agent.service', "#{systemd_directory}/stackstate-agent.service"
+      copy 'packaging/debian/start_agent.sh', '/opt/stackstate-agent/bin/start_agent.sh'
+      command 'chmod 755 /opt/stackstate-agent/bin/start_agent.sh'
+    end
+
+    # Use a supervisor conf with go-metro on 64-bit platforms only
+    if ohai['kernel']['machine'] == 'x86_64'
+      copy 'packaging/supervisor.conf', '/etc/sts-agent/supervisor.conf'
+    else
+      copy 'packaging/supervisor_32.conf', '/etc/sts-agent/supervisor.conf'
+    end
+
+    copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
+    copy 'connbeat.sh', '/opt/stackstate-agent/bin/connbeat.sh'
+    copy 'connbeat.yml', '/etc/sts-agent/connbeat.yml'
+    copy 'conf.d', '/etc/sts-agent/'
+    mkdir '/etc/sts-agent/checks.d/'
+    command 'chmod 755 /etc/init.d/stackstate-agent'
+    touch '/usr/bin/sts-agent'
+
+    # Remove the .pyc and .pyo files from the package and list them in a file
+    # so that the prerm script knows which compiled files to remove
+    command "echo '# DO NOT REMOVE/MODIFY - used by package removal tasks' > #{install_dir}/embedded/.py_compiled_files.txt"
+    command "find #{install_dir}/embedded '(' -name '*.pyc' -o -name '*.pyo' ')' -type f -delete -print >> #{install_dir}/embedded/.py_compiled_files.txt"
   end
 
   if osx?
