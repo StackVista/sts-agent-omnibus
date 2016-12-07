@@ -1,5 +1,5 @@
 #!/bin/sh
-LINUX_DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon)" /etc/issue)
+LINUX_DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue)
 
 if [ -f "/etc/debian_version" ] || [ "$LINUX_DISTRIBUTION" == "Debian" ] || [ "$LINUX_DISTRIBUTION" == "Ubuntu" ]; then
     set -e
@@ -15,12 +15,11 @@ if [ -f "/etc/debian_version" ] || [ "$LINUX_DISTRIBUTION" == "Debian" ] || [ "$
         rm -rf /var/log/stackstate
         rm -rf /var/lib/stackstate
     fi
-elif [ -f "/etc/redhat-release" ] || [ "$LINUX_DISTRIBUTION" == "RedHat" ] || [ "$LINUX_DISTRIBUTION" == "CentOS" ] || [ "$LINUX_DISTRIBUTION" == "openSUSE" ] || [ "$LINUX_DISTRIBUTION" == "Amazon" ]; then
+elif [ -f "/etc/redhat-release" ] || [ "$LINUX_DISTRIBUTION" == "RedHat" ] || [ "$LINUX_DISTRIBUTION" == "CentOS" ] || [ "$LINUX_DISTRIBUTION" == "openSUSE" ] || [ "$LINUX_DISTRIBUTION" == "Amazon" ] || [ "$LINUX_DISTRIBUTION" == "SUSE" ]; then
     case "$*" in
       0)
         # We're uninstalling.
-        getent passwd sts-agent > /dev/null && userdel sts-agent
-        getent group sts-agent >/dev/null && groupdel sts-agent
+        # We don't delete the dd-agent user/group (see https://fedoraproject.org/wiki/Packaging:UsersAndGroups#Allocation_Strategies)
         ;;
       1)
         # We're upgrading.

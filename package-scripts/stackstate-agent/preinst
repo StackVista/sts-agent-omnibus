@@ -4,7 +4,7 @@ INSTALL_DIR=/opt/stackstate-agent
 LOG_DIR=/var/log/stackstate
 mkdir -p $LOG_DIR
 
-DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon)" /etc/issue 2>/dev/null || uname -s)
+DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue 2>/dev/null || uname -s)
 
 # Linux installation
 if [ "$DISTRIBUTION" != "Darwin" ]; then
@@ -32,9 +32,12 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
         rm /etc/sts-agent/supervisor_ddagent.conf
     fi
 
+    # It would be nice to install a StackState key as a trusted key here so we could allow customers
+    # to get the stackstate-agent from an APT server. For now we distribute manually.
+
     #DEBHELPER#
 
-  elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ "$DISTRIBUTION" == "RedHat" ] || [ "$DISTRIBUTION" == "CentOS" ] || [ "$DISTRIBUTION" == "openSUSE" ] || [ "$DISTRIBUTION" == "Amazon" ]; then
+  elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ "$DISTRIBUTION" == "RedHat" ] || [ "$DISTRIBUTION" == "CentOS" ] || [ "$DISTRIBUTION" == "openSUSE" ] || [ "$DISTRIBUTION" == "Amazon" ] || [ "$DISTRIBUTION" == "SUSE" ]; then
     getent group sts-agent >/dev/null || groupadd -r sts-agent
     getent passwd sts-agent >/dev/null || \
       useradd -r -M -g sts-agent -d $INSTALL_DIR -s /bin/sh \

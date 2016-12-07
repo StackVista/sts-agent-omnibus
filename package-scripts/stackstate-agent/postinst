@@ -5,7 +5,7 @@ LOG_DIR=/var/log/stackstate
 CONNBEAT_DATA_DIR=/var/lib/stackstate/connbeat
 RUN_DIR=$INSTALL_DIR/run
 
-DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon)" /etc/issue 2>/dev/null || uname -s)
+DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue 2>/dev/null || uname -s)
 
 error_exit()
 {
@@ -44,15 +44,14 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
               echo "Enabling service stackstate-agent"
               update-rc.d stackstate-agent enable >/dev/null 2>&1
               # Only create sts-agent group and/or user if they don't already exist
-              getent group sts-agent >/dev/null || echo "Creating sts-agent group" && addgroup --system sts-agent --quiet
+              getent group sts-agent >/dev/null || (echo "Creating sts-agent group" && addgroup --system sts-agent --quiet)
               set +e
               id -u sts-agent >/dev/null 2>&1
               USER_EXISTS=$?
               set -e
               if [ ! $USER_EXISTS -eq 0 ]; then
                   echo "Creating sts-agent user"
-                  adduser --system sts-agent --disabled-login --shell /bin/sh --no-create-home --group --quiet
-                  usermod -d /opt/stackstate-agent sts-agent
+                  adduser --system sts-agent --disabled-login --shell /bin/sh --home ${INSTALL_DIR} --no-create-home --group --quiet
               elif id -nG sts-agent | grep --invert-match --word-regexp --quiet 'sts-agent'; then
                   # User exists but is not part of the sts-agent group
                   echo "Adding sts-agent user to sts-agent group"
@@ -73,8 +72,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   chown -R sts-agent:root ${CONFIG_DIR}
   chown -R sts-agent:root ${LOG_DIR}
   chown root:root /etc/init.d/stackstate-agent
-  chown -R root:root /opt/stackstate-agent
-  chown -R sts-agent:root ${RUN_DIR}
+  chown -R sts-agent:sts-agent ${INSTALL_DIR}
   chmod 4755 /opt/stackstate-agent/bin/connbeat
 
   if command -v chkconfig >/dev/null 2>&1; then
@@ -93,7 +91,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   # did its job and exist zero, otherwise, if the file exists but it's wrong we
   # have to return a non zero exit status so that the system (and the user) are
   # notified the installation went wrong.
-  /etc/init.d/stackstate-agent configcheck
+  /etc/init.d/stackstate-agent configcheck > /dev/null 2>&1
   RETVAL=$?
   if [ $RETVAL -eq 0 ]; then
       echo "(Re)starting stackstate-agent now..."
@@ -110,6 +108,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
           # the step-by-step instructions and will add the config file next.
           exit 0
       else
+          echo "Invalid check configuration. Please run sudo /etc/init.d/stackstate-agent configcheck for more details."
           exit $RETVAL
       fi
   fi

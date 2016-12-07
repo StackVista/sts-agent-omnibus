@@ -63,8 +63,8 @@ The Mac build platform should have:
 * [Go](http://golang.org/dl/) installed,
 * sudoer rights for the build user,
 * Bundler installed: `sudo gem install bundler`,
-* Important directories created: `sudo mkdir -p /var/cache/omnibus /opt/datadog-agent`,
-* Owned by the right user: `sudo chown $USER:nogroup /var/cache/omnibus /opt/datadog-agent`.
+* Important directories created: `sudo mkdir -p /var/cache/omnibus /opt/stackstate-agent`,
+* Owned by the right user: `sudo chown $USER:nogroup /var/cache/omnibus /opt/stackstate-agent`.
 * Xcode license accepted (to sign package) `sudo xcodebuild -license`
 * Datadog signing key
 
