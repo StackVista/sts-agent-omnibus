@@ -37,7 +37,7 @@ ls $PROJECT_DIR
 
 echo "Going into project dir $PROJECT_DIR"
 
-strace cd $PROJECT_DIR
+cd $PROJECT_DIR
 
 echo "Fetching dd-agent-omnibus-branch $OMNIBUS_BRANCH"
 
