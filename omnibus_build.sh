@@ -35,9 +35,15 @@ which cd || true
 
 ls $PROJECT_DIR
 
+echo "Path is $PATH"
+
 echo "Going into project dir $PROJECT_DIR"
 
 cd $PROJECT_DIR
+
+echo "exiting (for diagnostics)"
+
+exit 1
 
 echo "Fetching dd-agent-omnibus-branch $OMNIBUS_BRANCH"
 
