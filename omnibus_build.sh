@@ -31,7 +31,7 @@ rm -rf /opt/$PROJECT_NAME/*
 
 echo $PS1
 
-which cd
+which cd || true
 
 ls $PROJECT_DIR
 
