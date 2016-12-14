@@ -19,8 +19,6 @@ export OMNIBUS_BRANCH=${OMNIBUS_BRANCH:-"master"}
 export OMNIBUS_SOFTWARE_BRANCH=${OMNIBUS_SOFTWARE_BRANCH:-"master"}
 export OMNIBUS_RUBY_BRANCH=${OMNIBUS_RUBY_BRANCH:-"datadog-5.0.0"}
 
-set -e
-
 # Clean up omnibus artifacts
 rm -rf /var/cache/omnibus/pkg/*
 
