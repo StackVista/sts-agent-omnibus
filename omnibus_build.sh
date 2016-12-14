@@ -39,7 +39,7 @@ echo "Path is $PATH"
 
 echo "Going into project dir $PROJECT_DIR"
 
-cd $PROJECT_DIR
+cd $PROJECT_DIR || echo "going into project dir failed"
 
 echo "exiting (for diagnostics)"
 
