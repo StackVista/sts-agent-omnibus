@@ -29,7 +29,13 @@ rm -f /etc/init.d/stackstate-agent
 rm -rf /etc/sts-agent
 rm -rf /opt/$PROJECT_NAME/*
 
-echo "Going into project dir"
+echo $PS1
+
+which cd
+
+ls $PROJECT_DIR
+
+echo "Going into project dir $PROJECT_DIR"
 
 cd $PROJECT_DIR
 
