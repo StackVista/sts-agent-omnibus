@@ -29,7 +29,14 @@ rm -f /etc/init.d/stackstate-agent
 rm -rf /etc/sts-agent
 rm -rf /opt/$PROJECT_NAME/*
 
+# Unfortunately 'cd' is replaced by rvm with some ruby script that when
+# building the RPM makes moving the the project dir fail, so we need to
+# disable errexit here:
+set +e
+
 cd $PROJECT_DIR
+
+set -e
 
 # Allow to use a different dd-agent-omnibus branch
 git fetch --all
