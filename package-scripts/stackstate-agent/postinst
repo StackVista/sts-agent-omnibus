@@ -5,7 +5,8 @@ LOG_DIR=/var/log/stackstate
 CONNBEAT_DATA_DIR=/var/lib/stackstate/connbeat
 RUN_DIR=$INSTALL_DIR/run
 
-DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue 2>/dev/null || uname -s)
+KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
+DISTRIBUTION=$(lsb_release -d 2>/dev/null | grep -Eo $KNOWN_DISTRIBUTION  || grep -Eo $KNOWN_DISTRIBUTION /etc/issue 2>/dev/null || grep -Eo $KNOWN_DISTRIBUTION /etc/Eos-release 2>/dev/null || uname -s)
 
 error_exit()
 {
@@ -69,8 +70,8 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   fi
 
   # Set proper rights to the sts-agent user
-  chown -R sts-agent:root ${CONFIG_DIR}
-  chown -R sts-agent:root ${LOG_DIR}
+  chown -R sts-agent:sts-agent ${CONFIG_DIR}
+  chown -R sts-agent:sts-agent ${LOG_DIR}
   chown root:root /etc/init.d/stackstate-agent
   chown -R sts-agent:sts-agent ${INSTALL_DIR}
   chown root:root /opt/stackstate-agent/bin/connbeat
@@ -82,7 +83,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
   # Create symlinks to the various agent's components
   ln -sf $INSTALL_DIR/agent/agent.py /usr/bin/sts-agent
-  chown -R sts-agent:root /usr/bin/sts-agent
+  chown -R sts-agent:sts-agent /usr/bin/sts-agent
   chmod 755 /usr/bin/sts-agent
 
   # The configcheck call will return zero if the config is valid, which means we

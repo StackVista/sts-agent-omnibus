@@ -4,7 +4,8 @@ INSTALL_DIR=/opt/stackstate-agent
 LOG_DIR=/var/log/stackstate
 mkdir -p $LOG_DIR
 
-DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue 2>/dev/null || uname -s)
+KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
+DISTRIBUTION=$(lsb_release -d 2>/dev/null | grep -Eo $KNOWN_DISTRIBUTION  || grep -Eo $KNOWN_DISTRIBUTION /etc/issue 2>/dev/null || grep -Eo $KNOWN_DISTRIBUTION /etc/Eos-release 2>/dev/null || uname -s)
 
 # Linux installation
 if [ "$DISTRIBUTION" != "Darwin" ]; then
@@ -37,7 +38,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
     #DEBHELPER#
 
-  elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ "$DISTRIBUTION" == "RedHat" ] || [ "$DISTRIBUTION" == "CentOS" ] || [ "$DISTRIBUTION" == "openSUSE" ] || [ "$DISTRIBUTION" == "Amazon" ] || [ "$DISTRIBUTION" == "SUSE" ]; then
+  elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ -f "/etc/SuSE-release" ] || [ "$DISTRIBUTION" == "RedHat" ] || [ "$DISTRIBUTION" == "CentOS" ] || [ "$DISTRIBUTION" == "openSUSE" ] || [ "$DISTRIBUTION" == "Amazon" ] || [ "$DISTRIBUTION" == "SUSE" ] || [ "$LINUX_DISTRIBUTION" == "Arista" ]; then
     getent group sts-agent >/dev/null || groupadd -r sts-agent
     getent passwd sts-agent >/dev/null || \
       useradd -r -M -g sts-agent -d $INSTALL_DIR -s /bin/sh \
@@ -62,7 +63,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   # of https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html)
   # It is also here because version < 5.4 didn't delete .pyc,
   # so we need to be sure to clean them here (if a file is deleted for instance)
-  find $INSTALL_DIR/agent -name '*.py[co]' -type f -delete || true
+  find $INSTALL_DIR/agent -name '*.py[co]' -type f -delete >/dev/null 2>&1 || true
 
   # FIXME: remove when CentOS5 support is dropped (03/31/2017) or when everybody
   # has stopped using sts-agent 5.3 (and older versions ofc)

@@ -17,7 +17,8 @@ export PROJECT_NAME=datadog-agent
 export LOG_LEVEL=${LOG_LEVEL:-"info"}
 export OMNIBUS_BRANCH=${OMNIBUS_BRANCH:-"master"}
 export OMNIBUS_SOFTWARE_BRANCH=${OMNIBUS_SOFTWARE_BRANCH:-"master"}
-export OMNIBUS_RUBY_BRANCH=${OMNIBUS_RUBY_BRANCH:-"datadog-5.0.0"}
+export OMNIBUS_RUBY_BRANCH=${OMNIBUS_RUBY_BRANCH:-"datadog-5.5.0"}
+export INTEGRATION_CORE_BRANCH=${INTEGRATION_CORE_BRANCH:-"master"}
 
 set -e
 
@@ -29,14 +30,7 @@ rm -f /etc/init.d/stackstate-agent
 rm -rf /etc/sts-agent
 rm -rf /opt/$PROJECT_NAME/*
 
-# Unfortunately 'cd' is replaced by rvm with some ruby script that when
-# building the RPM makes moving the the project dir fail, so we need to
-# disable errexit here:
-set +e
-
-cd $PROJECT_DIR
-
-set -e
+builtin cd $PROJECT_DIR
 
 # Allow to use a different dd-agent-omnibus branch
 git fetch --all
@@ -47,13 +41,6 @@ git reset --hard origin/$OMNIBUS_BRANCH
 if [ -n "$RPM_SIGNING_PASSPHRASE" ]; then
   gpg --import /keys/RPM-SIGNING-KEY.private
 fi
-
-# Last but not least, let's make sure that we rebuild the agent everytime because
-# the extra package files are destroyed when the build container stops (we have
-# to tweak omnibus-git-cache directly for that). Same for gohai and go-metro.
-git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -d `git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -l | grep datadog-agent` || true
-git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -d `git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -l | grep datadog-gohai` || true
-git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -d `git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -l | grep datadog-metro` || true
 
 # Install the gems we need, with stubs in bin/
 bundle update # Make sure to update to the latest version of omnibus-software

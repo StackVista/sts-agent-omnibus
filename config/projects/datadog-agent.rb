@@ -1,9 +1,23 @@
 require "./lib/ostools.rb"
 
 name 'stackstate-agent'
-maintainer 'StackState <info@stackstate.com>'
+if windows?
+  # Windows doesn't want our e-mail address :(
+  maintainer 'StackState'
+else
+  maintainer 'StackState <info@stackstate.com>'
+end
 homepage 'http://www.stackstate.com'
-install_dir '/opt/stackstate-agent'
+
+if ohai['platform'] == "windows"
+  # Note: this is not the final install dir, not even the default one, just a convenient
+  # spaceless dir in which the agent will be built.
+  # Omnibus doesn't quote the Git commands it launches unfortunately, which makes it impossible
+  # to put a space here...
+  install_dir "C:/opt/stackstate-agent/"
+else
+  install_dir '/opt/stackstate-agent'
+end
 
 build_version do
   source :git, from_dependency: 'datadog-agent'
@@ -39,6 +53,7 @@ end
 package :rpm do
   vendor 'StackState <info@stackstate.com>'
   epoch 1
+  dist_tag ''
   license 'Simplified BSD License'
   category 'System Environment/Daemons'
   priority 'extra'
@@ -59,6 +74,40 @@ end
 compress :dmg do
   window_bounds '200, 200, 750, 600'
   pkg_position '10, 10'
+end
+
+# Windows .msi specific flags
+package :msi do
+  # previous upgrade code was used for older installs, and generated
+  # per-user installs.  Changing upgrade code, and switching to
+  # per-machine
+  per_user_upgrade_code = '82210ed1-bbe4-4051-aa15-002ea31dde15'
+
+  # For a consistent package management, please NEVER change this code
+  upgrade_code '0c50421b-aefb-4f15-a809-7af256d608a5'
+  bundle_msi true
+  wix_candle_extension 'WixUtilExtension'
+  wix_light_extension 'WixUtilExtension'
+  if ENV['SIGN_WINDOWS']
+    signing_identity "ECCDAE36FDCB654D2CBAB3E8975AA55469F96E4C", machine_store: true, algorithm: "SHA256"
+  end
+  parameters({
+    'InstallDir' => install_dir,
+    'InstallFiles' => "#{Omnibus::Config.source_dir()}/datadog-agent/sts-agent/packaging/datadog-agent/win32/install_files",
+    'DistFiles' => "#{Omnibus::Config.source_dir()}/datadog-agent/sts-agent/dist",
+    'PerUserUpgradeCode' => per_user_upgrade_code
+  })
+end
+# Note: this is to try to avoid issues when upgrading from an
+# old version of the agent which shipped also a datadog-agent-base
+# package.
+if redhat?
+  replace 'stackstate-agent-base < 5.0.0'
+  replace 'stackstate-agent-lib < 5.0.0'
+elsif debian?
+  replace 'stackstate-agent-base (<< 5.0.0)'
+  replace 'stackstate-agent-lib (<< 5.0.0)'
+  conflict 'stackstate-agent-base (<< 5.0.0)'
 end
 
 # ------------------------------------
@@ -101,80 +150,38 @@ if linux?
   # during RPM upgrades. (the old files from the RPM file listthat are not in the new RPM file
   # list will get removed, that's why we need this one here)
   extra_package_file '/usr/bin/sts-agent'
-
-  # Linux-specific dependencies
-  dependency 'procps-ng'
-  dependency 'sysstat'
 end
 
-# Mac and Windows
-if osx? or windows?
-  dependency 'gui'
-end
-
-# ------------------------------------
-# Dependencies
-# ------------------------------------
-
-# creates required build directories
+# creates required build directories - has to be the first declared dep
 dependency 'preparation'
 
-# Agent dependencies
-dependency 'boto'
-dependency 'docker-py'
-dependency 'ntplib'
-dependency 'protobuf-py'
-dependency 'pycrypto'
-dependency 'pyopenssl'
-dependency 'python-consul'
-dependency 'python-etcd'
-dependency 'pyyaml'
-dependency 'simplejson'
-dependency 'supervisor'
-dependency 'tornado'
-dependency 'uptime'
-dependency 'uuid'
-dependency 'zlib'
 
-# Check dependencies
-dependency 'adodbapi'
-dependency 'beautifulsoup4'
-dependency 'dnspython'
-dependency 'httplib2'
-dependency 'kafka-python'
-dependency 'kazoo'
-dependency 'paramiko'
-dependency 'pg8000'
-dependency 'psutil'
-dependency 'psycopg2'
-dependency 'pymongo'
-dependency 'pymysql'
-dependency 'pysnmp'
-dependency 'python-gearman'
-dependency 'python-memcached'
-dependency 'python-redis'
-dependency 'python-rrdtool'
-dependency 'pyvmomi'
-dependency 'requests'
-dependency 'scandir'
-dependency 'snakebite'
+if not windows?
+  # Additional software
+  dependency 'datadogpy'
+end
 
-# Additional software
-dependency 'datadogpy'
-
-# datadog-gohai and datadog-metro are built last before datadog-agent since they should always
-# be rebuilt (if put above, they would dirty the cache of the dependencies below
+# datadog-gohai, datadog-metro and datadog-trace-agent
+# are built last before datadog-agent since they should always be rebuilt
+# (if put above, they would dirty the cache of the dependencies below
 # and trigger a useless rebuild of many packages)
-dependency 'datadog-gohai'
+if not osx?
+  dependency 'datadog-gohai'
+end
+
 if linux? and ohai['kernel']['machine'] == 'x86_64'
   dependency 'datadog-metro'
 end
 
+if windows?
+  dependency 'datadog-upgrade-helper'
+end
+if linux?
+  dependency 'datadog-trace-agent'
+end
+
 # Datadog agent
 dependency 'datadog-agent'
-
-# version manifest file
-dependency 'version-manifest'
-
+dependency 'datadog-agent-integrations'
 exclude '\.git*'
 exclude 'bundler\/git'
