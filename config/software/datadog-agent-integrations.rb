@@ -6,13 +6,13 @@ dependency 'pip'
 dependency 'datadog-agent'
 dependency 'integration-deps'
 
-relative_path 'integrations-core'
+relative_path 'sts-agent-integrations-core'
 
 # The only integrations that will be packaged with the agent
 # are the ones that are officiallly supported.
 local_integrations_core_repo = ENV['LOCAL_INTEGRATIONS_CORE_REPO']
 if local_integrations_core_repo.nil? || local_integrations_core_repo.empty?
-  source git: 'https://github.com/DataDog/integrations-core.git'
+  source git: 'https://github.com/StackVista/sts-agent-integrations-core.git'
 else
   # For local development
   source path: ENV['LOCAL_INTEGRATIONS_CORE_REPO']
