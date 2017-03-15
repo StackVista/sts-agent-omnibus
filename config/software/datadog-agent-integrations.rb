@@ -51,7 +51,7 @@ build do
 
     # The conf directory is different on every system
     if linux?
-      conf_directory = "/etc/dd-agent/conf.d"
+      conf_directory = "/etc/sts-agent/conf.d"
     elsif osx?
       conf_directory = "#{install_dir}/etc"
     elsif windows?
