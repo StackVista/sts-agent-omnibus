@@ -52,6 +52,8 @@ python-redis
 python-rrdtool
 pyyaml
 pyvmomo
+pytz
+iso8601
 *** qtorequests
 ** setuptools
 simplejson
