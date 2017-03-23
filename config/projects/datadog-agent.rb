@@ -158,6 +158,8 @@ dependency 'pyvmomi'
 dependency 'requests'
 dependency 'scandir'
 dependency 'snakebite'
+dependency 'pytz'
+dependency 'iso8601'
 
 # Additional software
 dependency 'datadogpy'
