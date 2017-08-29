@@ -159,6 +159,7 @@ dependency 'requests'
 dependency 'scandir'
 dependency 'snakebite'
 dependency 'pytz'
+dependency 'python_algorithms'
 dependency 'iso8601'
 
 # Additional software
