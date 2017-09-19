@@ -29,3 +29,9 @@ if not windows?
 else
   dependency 'pyodbc'
 end
+
+# Additional stackstate dependencies
+dependency 'pytz'
+dependency 'python_algorithms'
+dependency 'iso8601'
+
