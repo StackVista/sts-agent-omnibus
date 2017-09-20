@@ -30,14 +30,18 @@ end
 # Agent dependencies
 dependency 'boto'
 dependency 'docker-py'
+
+dependency 'jmxfetch'
+dependency 'jmxterm'
+
 dependency 'ntplib'
 dependency 'protobuf-py'
 dependency 'psutil'
-dependency 'pycrypto'
 dependency 'pyopenssl'
 dependency 'python-consul'
 dependency 'python-etcd'
 dependency 'pyyaml'
+dependency 'rancher-metadata'
 dependency 'requests'
 dependency 'simplejson'
 dependency 'tornado'
@@ -47,6 +51,3 @@ dependency 'uuid'
 # Check dependencies
 # psutil is required by the core agent on Windows
 dependency 'integration-deps'
-
-# version manifest file
-dependency 'version-manifest'

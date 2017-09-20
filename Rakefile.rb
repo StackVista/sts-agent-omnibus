@@ -41,7 +41,11 @@ namespace :agent do
   task :'pull-integrations' do
     integration_branch = ENV['INTEGRATION_BRANCH'] || 'master'
 
+    # FSROOT is "/" on linux, "c:\" on windows.  Let's not clobber the filesystem
+    # if someone forgets to set INTEGRATIONS_REPO
+    raise 'INTEGRATIONS_REPO not set!' unless ENV['INTEGRATIONS_REPO']
     sh "rm -rf #{FSROOT}#{ENV['INTEGRATIONS_REPO']}"
+
     sh "git clone https://github.com/DataDog/#{ENV['INTEGRATIONS_REPO']}.git /#{ENV['INTEGRATIONS_REPO']} || true"
     sh "cd /#{ENV['INTEGRATIONS_REPO']} && git checkout #{integration_branch}"
     sh "cd /#{ENV['INTEGRATIONS_REPO']} && git fetch --all"
@@ -67,11 +71,18 @@ namespace :agent do
   desc 'Build all integrations'
   task :'build-all-integrations' do
     checks = Dir.glob("/#{ENV['INTEGRATIONS_REPO']}/*/")
+    if ENV['SKIP_INTEGRATION']
+      skip_checks = ENV['SKIP_INTEGRATION'].split(',').map(&:strip)
+    else
+      skip_checks = []
+    end
     checks.each do |check|
       check.slice! "/#{ENV['INTEGRATIONS_REPO']}/"
       check.slice! "/"
-      prepare_and_execute_build(check)
-      Rake::Task["agent:clean"].invoke
+      unless skip_checks.include? check
+        prepare_and_execute_build(check)
+        Rake::Task["agent:clean"].invoke
+      end
     end
   end
 end
@@ -145,7 +156,7 @@ def erb_header(variables)
   # this method generates a header usable by a ERB file
   out = ""
   variables.each do |key, value|
-    out += "<% #{key}=\"#{value}\" %>"
+    out += "<% #{key}='#{value}' %>"
   end
   out
 end

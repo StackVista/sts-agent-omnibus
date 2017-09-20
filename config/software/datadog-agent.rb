@@ -5,7 +5,7 @@ always_build true
 
 local_agent_repo = ENV['LOCAL_AGENT_REPO']
 if local_agent_repo.nil? || local_agent_repo.empty?
-  source git: 'git@github.com:StackVista/sts-agent.git'
+  source git: 'git@github.com:StackVista/sts-agent.git', always_fetch_tags: true
 else
   # For local development
   source path: ENV['LOCAL_AGENT_REPO']
@@ -80,11 +80,6 @@ build do
     mkdir '/etc/sts-agent/checks.d/'
     command 'chmod 755 /etc/init.d/stackstate-agent'
     touch '/usr/bin/sts-agent'
-
-    # Remove the .pyc and .pyo files from the package and list them in a file
-    # so that the prerm script knows which compiled files to remove
-    command "echo '# DO NOT REMOVE/MODIFY - used by package removal tasks' > #{install_dir}/embedded/.py_compiled_files.txt"
-    command "find #{install_dir}/embedded '(' -name '*.pyc' -o -name '*.pyo' ')' -type f -delete -print >> #{install_dir}/embedded/.py_compiled_files.txt"
   end
 
   if osx?
@@ -190,6 +185,13 @@ build do
     delete "#{install_dir}/dist/ddagent.exe"
     # The GUI also needs to have the certificate in its folder to send flares
     copy "datadog-cert.pem", "#{install_dir}/dist/datadog-cert.pem"
+
+    #make (yet another) copy of the the microsoft DLLS in the embedded DLLS
+    # directory. For some reason, it's not using the correct binary search
+    # path, and the compiled DLLs fail to load.  Appears to only be a problem
+    # on Win2k8, on later OSes that CRT is part of the OS'
+    copy "#{install_dir}/dist/msvc*.dll", "#{install_dir}/embedded/DLLs"
+    copy "#{install_dir}/dist/Microsoft*.manifest", "#{install_dir}/embedded/DLLs"
 
     # Special directories, which won't be installed at the same place than others (ProgramData)
     mkdir "../../extra_package_files"

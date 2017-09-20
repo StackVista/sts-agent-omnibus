@@ -18,7 +18,7 @@ else
   source path: ENV['LOCAL_INTEGRATIONS_CORE_REPO']
 end
 
-integrations_core_branch = ENV['INTEGRATION_CORE_BRANCH']
+integrations_core_branch = ENV['INTEGRATIONS_CORE_BRANCH']
 if integrations_core_branch.nil? || integrations_core_branch.empty?
   default_version 'master'
 else
@@ -115,17 +115,11 @@ build do
     # Close the checks requirements file
     all_reqs_file.close
 
-  pip_cmd = "install --install-option=\"--install-scripts=#{windows_safe_path(install_dir)}/bin\" -c #{install_dir}/agent/requirements.txt -r /check_requirements.txt"
-  if windows?
-    inst_cmd = "#{windows_safe_path(install_dir)}\\embedded\\scripts\\pip.exe " + pip_cmd
-    command inst_cmd
-  else
     build_env = {
       "LD_RUN_PATH" => "#{install_dir}/embedded/lib",
       "PATH" => "/#{install_dir}/embedded/bin:#{ENV['PATH']}",
     }
-    command "pip #{pip_cmd}", :env => build_env
-  end
+    pip "install -c #{install_dir}/agent/requirements.txt -r /check_requirements.txt", env: build_env
 
     copy '/check_requirements.txt', "#{install_dir}/agent/"
   end
