@@ -5,7 +5,7 @@ always_build true
 
 local_agent_repo = ENV['LOCAL_AGENT_REPO']
 if local_agent_repo.nil? || local_agent_repo.empty?
-  source git: 'git@github.com:StackVista/sts-agent.git', always_fetch_tags: true
+  source git: 'https://github.com/StackVista/sts-agent.git', always_fetch_tags: true
 else
   # For local development
   source path: ENV['LOCAL_AGENT_REPO']
