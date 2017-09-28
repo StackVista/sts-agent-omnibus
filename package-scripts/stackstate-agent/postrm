@@ -20,7 +20,7 @@ elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ -f "/etc/
     case "$*" in
       0)
         # We're uninstalling.
-        # We don't delete the dsts-agent user/group (see https://fedoraproject.org/wiki/Packaging:UsersAndGroups#Allocation_Strategies)
+        # We don't delete the sts-agent user/group (see https://fedoraproject.org/wiki/Packaging:UsersAndGroups#Allocation_Strategies)
         ;;
       1)
         # We're upgrading.
