@@ -4,11 +4,12 @@ INSTALL_DIR=/opt/stackstate-agent
 LOG_DIR=/var/log/stackstate
 mkdir -p $LOG_DIR
 
-DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue 2>/dev/null || uname -s)
+KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
+DISTRIBUTION=$(lsb_release -d 2>/dev/null | grep -Eo $KNOWN_DISTRIBUTION  || grep -Eo $KNOWN_DISTRIBUTION /etc/issue 2>/dev/null || grep -Eo $KNOWN_DISTRIBUTION /etc/Eos-release 2>/dev/null || uname -s)
 
 # Linux installation
 if [ "$DISTRIBUTION" != "Darwin" ]; then
-  if [ -f "/etc/debian_version" ] || [ "$DISTRIBUTION" == "Debian" ] || [ "$DISTRIBUTION" == "Ubuntu" ]; then
+  if [ -f "/etc/debian_version" ] || [ "$DISTRIBUTION" = "Debian" ] || [ "$DISTRIBUTION" = "Ubuntu" ]; then
     set -e
     if [ -f "/etc/init.d/stackstate-agent" ]; then
       if command -v invoke-rc.d >/dev/null 2>&1; then
@@ -37,7 +38,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
     #DEBHELPER#
 
-  elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ "$DISTRIBUTION" == "RedHat" ] || [ "$DISTRIBUTION" == "CentOS" ] || [ "$DISTRIBUTION" == "openSUSE" ] || [ "$DISTRIBUTION" == "Amazon" ] || [ "$DISTRIBUTION" == "SUSE" ]; then
+  elif [ -f "/etc/redhat-release" ] || [ -f "/etc/system-release" ] || [ -f "/etc/SuSE-release" ] || [ "$DISTRIBUTION" = "RedHat" ] || [ "$DISTRIBUTION" = "CentOS" ] || [ "$DISTRIBUTION" = "openSUSE" ] || [ "$DISTRIBUTION" = "Amazon" ] || [ "$DISTRIBUTION" = "SUSE" ] || [ "$DISTRIBUTION" = "Arista" ]; then
     getent group sts-agent >/dev/null || groupadd -r sts-agent
     getent passwd sts-agent >/dev/null || \
       useradd -r -M -g sts-agent -d $INSTALL_DIR -s /bin/sh \

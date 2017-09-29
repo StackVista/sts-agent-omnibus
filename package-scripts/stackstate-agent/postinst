@@ -5,7 +5,8 @@ LOG_DIR=/var/log/stackstate
 CONNBEAT_DATA_DIR=/var/lib/stackstate/connbeat
 RUN_DIR=$INSTALL_DIR/run
 
-DISTRIBUTION=$(grep -Eo "(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|SUSE)" /etc/issue 2>/dev/null || uname -s)
+KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
+DISTRIBUTION=$(lsb_release -d 2>/dev/null | grep -Eo $KNOWN_DISTRIBUTION  || grep -Eo $KNOWN_DISTRIBUTION /etc/issue 2>/dev/null || grep -Eo $KNOWN_DISTRIBUTION /etc/Eos-release 2>/dev/null || uname -s)
 
 error_exit()
 {
@@ -35,7 +36,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
       rm /etc/supervisor/conf.d/ddagent.conf
   fi
 
-  if [ -f "/etc/debian_version" ] || [ "$DISTRIBUTION" == "Debian" ] || [ "$DISTRIBUTION" == "Ubuntu" ]; then
+  if [ -f "/etc/debian_version" ] || [ "$DISTRIBUTION" = "Debian" ] || [ "$DISTRIBUTION" = "Ubuntu" ]; then
       set -e
       case "$1" in
           configure)
@@ -69,8 +70,8 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   fi
 
   # Set proper rights to the sts-agent user
-  chown -R sts-agent:root ${CONFIG_DIR}
-  chown -R sts-agent:root ${LOG_DIR}
+  chown -R sts-agent:sts-agent ${CONFIG_DIR}
+  chown -R sts-agent:sts-agent ${LOG_DIR}
   chown root:root /etc/init.d/stackstate-agent
   chown -R sts-agent:sts-agent ${INSTALL_DIR}
   chown root:root /opt/stackstate-agent/bin/connbeat
@@ -82,7 +83,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
   # Create symlinks to the various agent's components
   ln -sf $INSTALL_DIR/agent/agent.py /usr/bin/sts-agent
-  chown -R sts-agent:root /usr/bin/sts-agent
+  chown -R sts-agent:sts-agent /usr/bin/sts-agent
   chmod 755 /usr/bin/sts-agent
 
   # The configcheck call will return zero if the config is valid, which means we
@@ -129,7 +130,7 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   # Let's talk to our user installing the Agent a bit
   echo "# State at the beginning"
   echo "## Agent version"
-  grep AGENT_VERSION $INSTALL_DIR/agent/cofnig.py || echo "No config file"
+  grep AGENT_VERSION $INSTALL_DIR/agent/config.py || echo "No config file"
   echo "## $INSTALL_DIR"
   ls -al $INSTALL_DIR || "No agent installed"
   echo "## $APP_DIR/Contents/Resources"
@@ -140,7 +141,7 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
 
   # Otherwise, we hope he is using the install script and try to this user
   # If it fails, no choice but to use root :'(
-  if [ -z "$INSTALL_USER" ] || [ "$INSTALL_USER" == "root" ]; then
+  if [ -z "$INSTALL_USER" ] || [ "$INSTALL_USER" = "root" ]; then
     SCRIPT_INSTALL="yes"
     INSTALL_USER=`cat /tmp/stackstate-install-user || echo 'root'`
     rm -v /tmp/stackstate-install-user || true
@@ -192,7 +193,7 @@ elif [ "$DISTRIBUTION" = "Darwin" ]; then
   sudo -Hu $INSTALL_USER ln -vs $CONF_DIR/checks.d "$USER_HOME/.stackstate-agent/checks.d"
 
   # Error if app not properly installed or root
-  if [ "$INSTALL_USER" == "root" ]; then
+  if [ "$INSTALL_USER" = "root" ]; then
     echo 'INSTALL_USER is set to root, StackState Agent app has been installed'
     echo 'but is not configured. Running StackState Agent as root is not advised!'
     exit 1

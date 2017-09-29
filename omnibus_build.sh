@@ -12,12 +12,17 @@ eval `ssh-agent -s`
 ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts
 ssh-add /sts-build-keys/id_rsa
 
-export PROJECT_DIR=sts-agent-omnibus
-export PROJECT_NAME=datadog-agent
-export LOG_LEVEL=${LOG_LEVEL:-"info"}
+PROJECT_DIR=sts-agent-omnibus
+PROJECT_NAME=datadog-agent
+LOG_LEVEL=${LOG_LEVEL:-"info"}
+export AGENT_BRANCH=${AGENT_BRANCH:-"master"}
 export OMNIBUS_BRANCH=${OMNIBUS_BRANCH:-"master"}
 export OMNIBUS_SOFTWARE_BRANCH=${OMNIBUS_SOFTWARE_BRANCH:-"master"}
-export OMNIBUS_RUBY_BRANCH=${OMNIBUS_RUBY_BRANCH:-"datadog-5.0.0"}
+export OMNIBUS_RUBY_BRANCH=${OMNIBUS_RUBY_BRANCH:-"datadog-5.5.0"}
+export INTEGRATIONS_CORE_BRANCH=${INTEGRATIONS_CORE_BRANCH:-"master"}
+
+REMOTE_AGENT_REPO_RAW="https://raw.githubusercontent.com/StackVista/sts-agent"
+LOCAL_DD_AGENT="/dd-agent-repo"
 
 set -e
 
@@ -29,31 +34,29 @@ rm -f /etc/init.d/stackstate-agent
 rm -rf /etc/sts-agent
 rm -rf /opt/$PROJECT_NAME/*
 
-# Unfortunately 'cd' is replaced by rvm with some ruby script that when
-# building the RPM makes moving the the project dir fail, so we need to
-# disable errexit here:
-set +e
-
-cd $PROJECT_DIR
-
-set -e
+builtin cd $PROJECT_DIR
 
 # Allow to use a different dd-agent-omnibus branch
 git fetch --all
 git checkout $OMNIBUS_BRANCH
 git reset --hard origin/$OMNIBUS_BRANCH
 
+
 # If an RPM_SIGNING_PASSPHRASE has been passed, let's import the signing key
 if [ -n "$RPM_SIGNING_PASSPHRASE" ]; then
   gpg --import /keys/RPM-SIGNING-KEY.private
 fi
 
-# Last but not least, let's make sure that we rebuild the agent everytime because
-# the extra package files are destroyed when the build container stops (we have
-# to tweak omnibus-git-cache directly for that). Same for gohai and go-metro.
-git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -d `git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -l | grep datadog-agent` || true
-git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -d `git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -l | grep datadog-gohai` || true
-git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -d `git --git-dir=/var/cache/omnibus/cache/git_cache/opt/stackstate-agent tag -l | grep datadog-metro` || true
+# NOTE: JMX_VERSION plays no role <5.14.x (jmx bundled with agent)
+# If "current" JMX version, set it from the corresponding agent branch config.py
+if [ -n "$LOCAL_AGENT_REPO" ]; then
+  cd $LOCAL_DD_AGENT
+  JMX_VERSION=$(git show $AGENT_BRANCH:config.py | grep 'JMX_VERSION' | cut -f2 -d'=' | tr -d ' "')
+  cd -
+else
+  JMX_VERSION=$(curl -v $REMOTE_AGENT_REPO_RAW/$AGENT_BRANCH/config.py 2>/dev/null | grep 'JMX_VERSION' | cut -f2 -d'=' | tr -d ' "')
+fi
+export JMX_VERSION
 
 # Install the gems we need, with stubs in bin/
 bundle update # Make sure to update to the latest version of omnibus-software
