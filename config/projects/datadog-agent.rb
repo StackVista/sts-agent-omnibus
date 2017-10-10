@@ -109,6 +109,8 @@ elsif debian?
   replace 'stackstate-agent-base (<< 5.0.0)'
   replace 'stackstate-agent-lib (<< 5.0.0)'
   conflict 'stackstate-agent-base (<< 5.0.0)'
+  # needed starting debian 9
+  runtime_dependency 'gnupg'
 end
 
 # ------------------------------------
@@ -123,9 +125,10 @@ if linux?
     extra_package_file '/lib/systemd/system/stackstate-agent.service'
   end
 
-  # SysVInit service file
   if redhat?
     extra_package_file '/etc/rc.d/init.d/stackstate-agent'
+    extra_package_file '/usr/lib/systemd/system/stackstate-agent.service'
+
   end
 
   if suse?

@@ -8,5 +8,21 @@ getent group sts-agent >/dev/null || groupadd -r sts-agent
 getent passwd sts-agent >/dev/null || \
     useradd -r -M -g sts-agent -d /usr/share/stackstate/agent -s /bin/sh \
     -c "StackState Agent" sts-agent
-/etc/init.d/stackstate-agent restart
-exit 0
+
+# See comment in postinst script for an explanation of the logic below
+/etc/init.d/stackstate-agent configcheck > /dev/null 2>&1
+RETVAL=$?
+if [ $RETVAL -eq 0 ]; then
+  echo "(Re)starting stackstate-agent now..."
+   /etc/init.d/stackstate-agent restart
+fi
+if [ $RETVAL -ne 0 ]; then
+  if [ $RETVAL -eq 3 ]; then
+      # No stackstate.conf file is present. The user is probably following
+      # the step-by-step instructions and will add the config file next.
+      exit 0
+  else
+      echo "Invalid check configuration. Please run sudo /etc/init.d/stackstate-agent configcheck for more details."
+      exit $RETVAL
+  fi
+fi
