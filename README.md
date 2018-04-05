@@ -1,17 +1,9 @@
-Datadog Agent - Omnibus Project
+StackState Agent - Omnibus Project
 ================
 
-This is an [Omnibus](https://github.com/opscode/omnibus) project to build the Datadog Agent packages.
+This is an [Omnibus](https://github.com/opscode/omnibus) project to build the StackState Agent packages.
 
 It's using a [fork](https://github.com/chef/omnibus/compare/v4.0.0...DataDog:datadog-4.0.0) of the official 4.0.0 release of the Omnibus project.
-
-Builds are run in docker containers with Circleci.
-See:
-* https://github.com/DataDog/docker-dd-agent-build-deb-i386
-* https://github.com/DataDog/docker-dd-agent-build-rpm-i386
-* https://github.com/DataDog/docker-dd-agent-build-deb-x64
-* https://github.com/DataDog/docker-dd-agent-build-rpm-x64
-
 
 ## Build a package locally
 
@@ -23,11 +15,11 @@ See:
 PLATFORM="deb-x64" # must be in "deb-x64", "deb-i386", "rpm-x64", "rpm-i386"
 TRACE_AGENT_BRANCH="master" # Branch of the datadog-trace-agent repo to use, default "master"
 PROCESS_AGENT_BRANCH="master" # Branch of the datadog-process-agent repo to use, default "master"
-AGENT_BRANCH="master" # Branch of dd-agent repo to use, default "master"
-OMNIBUS_BRANCH="master" # Branch of dd-agent-omnibus repo to use, default "master"
+AGENT_BRANCH="master" # Branch of sts-agent repo to use, default "master"
+OMNIBUS_BRANCH="master" # Branch of sts-agent-omnibus repo to use, default "master"
 AGENT_VERSION="5.4.0" # default to the latest tag on that branch
 LOG_LEVEL="debug" # default to "info"
-LOCAL_AGENT_REPO="~/dd-agent" # Path to a local repo of the agent to build from. Defaut is not set and the build will be done against the github repo
+LOCAL_AGENT_REPO="~/sts-agent" # Path to a local repo of the agent to build from. Defaut is not set and the build will be done against the github repo
 
 # The passphrase of the key you want to use to sign your .rpm package (if
 # building an RPM package). If you don't set this variable, the RPM won't be
@@ -40,7 +32,7 @@ RPM_SIGNING_PASSPHRASE="my_super_secret_passphrase"
 
 mkdir -p pkg
 mkdir -p "cache/$PLATFORM"
-docker run --name "dd-agent-build-$PLATFORM" \
+docker run --name "sts-agent-build-$PLATFORM" \
   -e OMNIBUS_BRANCH=$OMNIBUS_BRANCH \
   -e LOG_LEVEL=$LOG_LEVEL \
   -e AGENT_BRANCH=$AGENT_BRANCH \
@@ -49,14 +41,14 @@ docker run --name "dd-agent-build-$PLATFORM" \
   -e PROCESS_AGENT_BRANCH=$PROCESS_AGENT_BRANCH \
   -e RPM_SIGNING_PASSPHRASE=$RPM_SIGNING_PASSPHRASE \
   -e LOCAL_AGENT_REPO=$LOCAL_AGENT_REPO # Only to use if you want to build from a local repo \
-  -v `pwd`/pkg:/dd-agent-omnibus/pkg \
+  -v `pwd`/pkg:/sts-agent-omnibus/pkg \
   -v `pwd`/keys:/keys \
   -v "`pwd`/cache/$PLATFORM:/var/cache/omnibus" \
-  -v $LOCAL_AGENT_REPO:/dd-agent-repo # Only to use if you want to build from a local repo \
-  "datadog/docker-dd-agent-build-$PLATFORM"
+  -v $LOCAL_AGENT_REPO:/dsts-agent-repo # Only to use if you want to build from a local repo \
+  "stackstate/docker-sts-agent-build-$PLATFORM"
 
 # Cleanup (necessary to launch another build)
-docker rm dd-agent-build-$PLATFORM
+docker rm sts-agent-build-$PLATFORM
 ```
 
 ## Build on Mac OS X
@@ -70,7 +62,6 @@ The Mac build platform should have:
 * Important directories created: `sudo mkdir -p /var/cache/omnibus /opt/stackstate-agent`,
 * Owned by the right user: `sudo chown $USER:nogroup /var/cache/omnibus /opt/stackstate-agent`.
 * Xcode license accepted (to sign package) `sudo xcodebuild -license`
-* Datadog signing key
 
 Then run:
 ```bash
