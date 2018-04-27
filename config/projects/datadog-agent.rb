@@ -165,7 +165,7 @@ if not windows?
   dependency 'datadogpy'
 end
 
-# datadog-gohai, datadog-metro and datadog-trace-agent
+# datadog-gohai, datadog-metro and stackstate-trace-agent
 # are built last before datadog-agent since they should always be rebuilt
 # (if put above, they would dirty the cache of the dependencies below
 # and trigger a useless rebuild of many packages)
@@ -181,7 +181,7 @@ if windows?
   dependency 'datadog-upgrade-helper'
 end
 if linux?
-  dependency 'datadog-trace-agent'
+  dependency 'stackstate-trace-agent'
   dependency 'datadog-process-agent'
 end
 

@@ -13,7 +13,7 @@ It's using a [fork](https://github.com/chef/omnibus/compare/v4.0.0...DataDog:dat
 
 ```bash
 PLATFORM="deb-x64" # must be in "deb-x64", "deb-i386", "rpm-x64", "rpm-i386"
-TRACE_AGENT_BRANCH="master" # Branch of the datadog-trace-agent repo to use, default "master"
+TRACE_AGENT_BRANCH="master" # Branch of the stackstate-trace-agent repo to use, default "master"
 PROCESS_AGENT_BRANCH="master" # Branch of the datadog-process-agent repo to use, default "master"
 AGENT_BRANCH="master" # Branch of sts-agent repo to use, default "master"
 OMNIBUS_BRANCH="master" # Branch of sts-agent-omnibus repo to use, default "master"
