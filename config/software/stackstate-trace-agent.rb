@@ -41,7 +41,7 @@ else
 
   agent_source_dir = "#{Omnibus::Config.source_dir}/stackstate-trace-agent"
   glide_cache_dir = "#{gopath}/src/github.com/Masterminds/glide"
-  agent_cache_dir = "#{gopath}/src/github.com/DataDog/stackstate-trace-agent"
+  agent_cache_dir = "#{gopath}/src/github.com/StackVista/stackstate-trace-agent"
 
 end
 
