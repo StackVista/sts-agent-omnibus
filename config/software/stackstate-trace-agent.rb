@@ -3,7 +3,7 @@ name "stackstate-trace-agent"
 require "./lib/ostools.rb"
 require 'pathname'
 
-source git: 'git@github.com:StackVista/stackstate-trace-agent.git'
+source git: 'https://github.com/StackVista/stackstate-trace-agent.git'
 
 trace_agent_branch = ENV['TRACE_AGENT_BRANCH']
 if trace_agent_branch.nil? || trace_agent_branch.empty?
@@ -29,7 +29,7 @@ if windows?
 
   agent_source_dir = "#{Omnibus::Config.source_dir}/stackstate-trace-agent"
   glide_cache_dir = "#{gopath}/src/github.com/Masterminds/glide"
-  agent_cache_dir = "#{gopath}/src/github.com/DataDog/stackstate-trace-agent"
+  agent_cache_dir = "#{gopath}/src/github.com/StackVista/stackstate-trace-agent"
 
 else
   trace_agent_bin = "trace-agent"
