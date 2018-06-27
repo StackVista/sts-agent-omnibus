@@ -185,6 +185,9 @@ if linux?
   dependency 'datadog-process-agent'
 end
 
+# Stackstate trace java jar
+dependency 'stackstate-trace-java'
+
 # Datadog agent
 dependency 'datadog-agent'
 dependency 'datadog-agent-integrations'

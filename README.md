@@ -18,6 +18,7 @@ PROCESS_AGENT_BRANCH="master" # Branch of the datadog-process-agent repo to use,
 AGENT_BRANCH="master" # Branch of sts-agent repo to use, default "master"
 OMNIBUS_BRANCH="master" # Branch of sts-agent-omnibus repo to use, default "master"
 AGENT_VERSION="5.4.0" # default to the latest tag on that branch
+STS_TRACE_JAVA_APM_VERSION="0.6.1B3" # Stackstate APM client for Java
 LOG_LEVEL="debug" # default to "info"
 LOCAL_AGENT_REPO="~/sts-agent" # Path to a local repo of the agent to build from. Defaut is not set and the build will be done against the github repo
 
