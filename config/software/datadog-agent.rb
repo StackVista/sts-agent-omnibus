@@ -45,12 +45,9 @@ build do
 
   if linux?
     # Configuration files
-    directory '/etc/sts-agent' do
-      owner 'sts-agent'
-      group 'sts-agent'
-      mode '0640'
-      action :create
-    end
+    mkdir '/etc/sts-agent'
+    command "chown -R sts-agent:sts-agent /etc/sts-agent"
+    command "chmod -R 0640 /etc/sts-agent"
 
     if debian?
       sys_type = 'debian'
