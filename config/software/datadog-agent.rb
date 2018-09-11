@@ -46,7 +46,6 @@ build do
   if linux?
     # Configuration files
     mkdir '/etc/sts-agent'
-    command "chown -R sts-agent:sts-agent /etc/sts-agent"
     command "chmod -R 0640 /etc/sts-agent"
 
     if debian?
