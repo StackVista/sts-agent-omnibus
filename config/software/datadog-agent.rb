@@ -45,7 +45,12 @@ build do
 
   if linux?
     # Configuration files
-    mkdir '/etc/sts-agent'
+    directory '/etc/sts-agent' do
+      owner 'sts-agent'
+      group 'sts-agent'
+      mode '0640'
+      action :create
+    end
 
     if debian?
       sys_type = 'debian'
