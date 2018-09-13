@@ -46,6 +46,7 @@ build do
   if linux?
     # Configuration files
     mkdir '/etc/sts-agent'
+    mkdir '/etc/sts-agent/branch_marker'
     command "chmod -R 0640 /etc/sts-agent"
 
     if debian?
