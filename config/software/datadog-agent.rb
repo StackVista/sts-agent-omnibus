@@ -46,8 +46,6 @@ build do
   if linux?
     # Configuration files
     mkdir '/etc/sts-agent'
-    mkdir '/etc/sts-agent/branch_marker'
-    command "chmod -R 0640 /etc/sts-agent"
 
     if debian?
       sys_type = 'debian'
@@ -77,7 +75,6 @@ build do
     copy 'stackstate.conf.example', '/etc/sts-agent/stackstate.conf.example'
     copy 'connbeat.sh', '/opt/stackstate-agent/bin/connbeat.sh'
     copy 'connbeat.yml', '/etc/sts-agent/connbeat.yml'
-    copy 'connbeat.yml', '/etc/sts-agent/branch_marker.yml'
     mkdir "/etc/sts-agent/conf.d/auto_conf"
     copy 'conf.d', '/etc/sts-agent/'
 

@@ -76,7 +76,9 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
   # Set proper rights to the sts-agent user
   chown -R sts-agent:sts-agent ${CONFIG_DIR}
+  chmod -R 0640 ${CONFIG_DIR}
   chown -R sts-agent:sts-agent ${LOG_DIR}
+  chmod -R 0640 ${LOG_DIR}
   chown root:root /etc/init.d/stackstate-agent
   chown -R sts-agent:sts-agent ${INSTALL_DIR}
   chown root:root /opt/stackstate-agent/bin/connbeat
