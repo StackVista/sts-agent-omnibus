@@ -6,6 +6,7 @@ name 'integration-deps'
 # we may also put any other C deps here that other integrations need
 dependency 'adodbapi'
 dependency 'beautifulsoup4'
+dependency 'defusedxml'
 dependency 'dnspython'
 dependency 'httplib2'
 dependency 'kazoo'
