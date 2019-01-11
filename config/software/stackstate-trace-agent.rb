@@ -33,7 +33,7 @@ if windows?
 
 else
   trace_agent_bin = "trace-agent"
-  gourl = "https://storage.googleapis.com/golang/go1.9.4.linux-amd64.tar.gz"
+  gourl = "https://storage.googleapis.com/golang/go1.10.4.linux-amd64.tar.gz"
   goout = "go.tar.gz"
   godir = "/usr/local/go18"
   gobin = "#{godir}/go/bin/go"
