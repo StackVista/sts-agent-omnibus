@@ -181,12 +181,13 @@ if windows?
   dependency 'datadog-upgrade-helper'
 end
 if linux?
-  dependency 'stackstate-trace-agent'
+  # not supported anymore for agent v1
+  # dependency 'stackstate-trace-agent'
   dependency 'datadog-process-agent'
 end
 
-# Stackstate trace java jar
-dependency 'stackstate-trace-java'
+# Stackstate trace java jar and not supported for agent v1
+# dependency 'stackstate-trace-java'
 
 # Datadog agent
 dependency 'datadog-agent'
