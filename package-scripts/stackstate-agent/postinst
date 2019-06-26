@@ -83,6 +83,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   chown -R sts-agent:sts-agent ${INSTALL_DIR}
   chown root:root /opt/stackstate-agent/bin/connbeat
   chmod 4755 /opt/stackstate-agent/bin/connbeat
+  chown root:root /etc/sts-agent/connbeat.yml
 
   if command -v chkconfig >/dev/null 2>&1; then
       chkconfig --add stackstate-agent
