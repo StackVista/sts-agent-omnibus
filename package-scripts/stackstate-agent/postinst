@@ -76,6 +76,7 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
 
   # Set proper rights to the sts-agent user
   chown -R sts-agent:sts-agent ${CONFIG_DIR}
+  chown root:root /etc/sts-agent/connbeat.yml
   chmod 0700 ${CONFIG_DIR}
   chown -R sts-agent:sts-agent ${LOG_DIR}
   chmod 0700 ${LOG_DIR}
@@ -83,7 +84,6 @@ if [ "$DISTRIBUTION" != "Darwin" ]; then
   chown -R sts-agent:sts-agent ${INSTALL_DIR}
   chown root:root /opt/stackstate-agent/bin/connbeat
   chmod 4755 /opt/stackstate-agent/bin/connbeat
-  chown root:root /etc/sts-agent/connbeat.yml
 
   if command -v chkconfig >/dev/null 2>&1; then
       chkconfig --add stackstate-agent
